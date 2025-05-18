@@ -1,0 +1,112 @@
+<mat-card class="practice-card" *ngIf="practice">
+  <mat-card-header>
+    <mat-card-title>{{ practice.type === 'essay' ? 'Essay Practice' : 'Multiple Choice Question' }}</mat-card-title>
+    <mat-card-subtitle>
+      Target Words: {{ practice.targetWords.join(', ') }}
+      <br>
+      Skills: {{ practice.targetSkills.join(', ') }}
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="prompt">{{ practice.prompt }}</div>
+
+    <!-- Essay Input -->
+    <div *ngIf="practice.type === 'essay'" class="essay-section">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Your Essay</mat-label>
+        <textarea 
+          matInput 
+          [(ngModel)]="userAnswer" 
+          rows="6" 
+          placeholder="Write your essay here..."
+        ></textarea>
+        <mat-hint>Use the target words in your essay</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <!-- Multiple Choice -->
+    <div *ngIf="practice.type === 'multipleChoice'" class="multiple-choice-section">
+      <mat-radio-group [(ngModel)]="userAnswer" class="choice-group">
+        <mat-radio-button 
+          *ngFor="let option of practice.options" 
+          [value]="option"
+          class="choice-option"
+        >
+          {{ option }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onSubmit()"
+      [disabled]="!userAnswer"
+    >
+      Submit Answer
+    </button>
+  </mat-card-actions>
+
+  <!-- Feedback Section -->
+  <mat-card-content *ngIf="feedback" class="feedback-section">
+    <div class="feedback-header" [class.correct]="feedback.evaluation.isCorrect">
+      <div class="feedback-status">
+        {{ feedback.evaluation.isCorrect ? '✓ Correct!' : '✗ Needs Improvement' }}
+      </div>
+      <div class="score-display">
+        <div class="score-circle" [style.background]="getScoreColor(feedback.evaluation.score)">
+          {{ feedback.evaluation.score }}
+        </div>
+        <span class="score-label">Score</span>
+      </div>
+    </div>
+    
+    <div class="feedback-content">
+      <p>{{ feedback.evaluation.feedback }}</p>
+      
+      <div *ngIf="feedback.evaluation.weaknesses.length > 0">
+        <h4>Areas to Work On:</h4>
+        <ul>
+          <li *ngFor="let weakness of feedback.evaluation.weaknesses">
+            {{ weakness }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="improvement-areas">
+        <div *ngIf="feedback.evaluation.improvementAreas.words.length > 0">
+          <h4>Words to Practice:</h4>
+          <div class="tag-list">
+            <span *ngFor="let word of feedback.evaluation.improvementAreas.words" class="tag needs-work">
+              {{ word }}
+            </span>
+          </div>
+        </div>
+
+        <div *ngIf="feedback.evaluation.improvementAreas.skills.length > 0">
+          <h4>Skills to Improve:</h4>
+          <div class="tag-list">
+            <span *ngFor="let skill of feedback.evaluation.improvementAreas.skills" class="tag needs-work">
+              {{ skill }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="strengths" *ngIf="feedback.evaluation.strengths.words.length > 0 || feedback.evaluation.strengths.skills.length > 0">
+        <h4>Well Done With:</h4>
+        <div class="tag-list">
+          <span *ngFor="let word of feedback.evaluation.strengths.words" class="tag good">
+            {{ word }}
+          </span>
+          <span *ngFor="let skill of feedback.evaluation.strengths.skills" class="tag good">
+            {{ skill }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

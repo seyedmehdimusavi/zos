@@ -1,0 +1,36 @@
+<div class="spelling-practice">
+  <div class="score-info" *ngIf="averageScore > 0">
+    Your Average Score: {{ averageScore }}%
+  </div>
+  <div class="practice-container">
+    <div class="word-section">
+      <button mat-raised-button color="primary" (click)="playWord()">
+        <mat-icon>volume_up</mat-icon>
+        Play Word
+      </button>
+      <span class="word-count">Word {{ currentWordIndex + 1 }} of {{ words.length }}</span>
+    </div>
+
+    <div class="input-section" *ngIf="!showResult">
+      <mat-form-field appearance="outline">
+        <mat-label>Type the word you hear</mat-label>
+        <input matInput [(ngModel)]="userInput" (keyup.enter)="checkSpelling()" placeholder="Type here...">
+      </mat-form-field>
+      <button mat-raised-button color="accent" (click)="checkSpelling()">Check</button>
+    </div>
+
+    <div class="result-section" *ngIf="showResult">
+      <div class="feedback" [class.correct]="isCorrect" [class.incorrect]="!isCorrect">
+        {{ feedback }}
+      </div>
+      <div class="action-buttons">
+        <button mat-raised-button color="primary" *ngIf="!isLastWord" (click)="nextWord()">
+          Next Word
+        </button>
+        <button mat-raised-button color="accent" *ngIf="isLastWord" (click)="restartPractice()">
+          Practice Again
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

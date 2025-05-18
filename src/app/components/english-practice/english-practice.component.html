@@ -1,0 +1,58 @@
+<div class="container">
+  <h2>English Practice</h2>
+  
+  <!-- Learning Items Display -->
+  <section class="learning-section" *ngIf="learningItems.length > 0">
+    <div class="section-header">
+      <h3>Your Learning Items</h3>
+    </div>
+    <div class="learning-items">
+      <div class="items-grid">
+        <div *ngFor="let item of learningItems" class="item-card">
+          <div class="card-content">
+            <h4>{{ item.name }}</h4>
+            <p class="item-type">Type: {{ item.type }}</p>
+            <div class="proficiency-info">
+              <p>Proficiency: {{ item.proficiency }}%</p>
+              <div class="progress-bar">
+                <div class="progress" [style.width.%]="item.proficiency"></div>
+              </div>
+            </div>
+            <p class="status" [class.needs-work]="item.needsImprovement">
+              {{ item.needsImprovement ? 'Needs Improvement' : 'Good Progress' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Practice Area -->
+  <mat-tab-group class="practice-area">
+    <mat-tab label="General Practice">
+      <div class="tab-content">
+        <button mat-raised-button color="primary" 
+                (click)="generateNewPractice()" 
+                *ngIf="!currentPractice">
+          Start New Practice
+        </button>
+
+        <app-practice-form
+          *ngIf="currentPractice"
+          [practice]="currentPractice"
+          [practiceResponse]="lastResponse"
+          (submitAnswer)="onAnswerSubmit($event)"
+        ></app-practice-form>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Spelling Practice">
+      <div class="tab-content">
+        <app-spelling-practice
+          [words]="wordList"
+          (practiceComplete)="onSpellingComplete($event)"
+        ></app-spelling-practice>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

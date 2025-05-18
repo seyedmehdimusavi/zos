@@ -1,0 +1,165 @@
+.container {
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.learning-section {
+  background: #2c2c2c;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  .section-header {
+    margin-bottom: 24px;
+    h3 {
+      color: #ffffff;
+      font-size: 1.5rem;
+      margin: 0;
+    }
+  }
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.item-card {
+  background: #3c3c3c;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: #ffffff;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-content {
+    padding: 20px;
+
+    h4 {
+      margin: 0 0 12px;
+      font-size: 1.2rem;
+      color: #ffffff;
+    }
+
+    .item-type {
+      color: #b3b3b3;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    .proficiency-info {
+      margin-bottom: 16px;
+
+      p {
+        margin: 0 0 8px;
+      }
+
+      .progress-bar {
+        background: #4a4a4a;
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+
+        .progress {
+          height: 100%;
+          background: #4caf50;
+          transition: width 0.3s ease;
+        }
+      }
+    }
+
+    .status {
+      margin: 0;
+      font-weight: 500;
+      &.needs-work {
+        color: #ff5252;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .learning-section {
+    padding: 16px;
+    margin: 16px 0;
+  }
+
+  .items-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.practice-content {
+  margin: 20px 0;
+}
+
+.prompt {
+  font-size: 1.1em;
+  margin: 20px 0;
+}
+
+.practice-area {
+  margin-top: 24px;
+  width: 80%;
+
+  .tab-content {
+    padding: 24px 0;
+  }
+}
+
+::ng-deep {
+  .mat-mdc-tab-group {
+    .mat-mdc-tab-header {
+      background: #2c2c2c;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .mat-mdc-tab-body-wrapper {
+      background: #2c2c2c;
+      border-radius: 0 0 8px 8px;
+      padding: 0 24px 24px;
+    }
+  }
+}
+
+.options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+textarea {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.feedback {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  background: #e3f2fd;
+}
+
+.correct { 
+  color: #4caf50; 
+}
+
+.incorrect { 
+  color: #f44336; 
+}

@@ -1,0 +1,78 @@
+<div class="feedback-dialog">
+  <h2 mat-dialog-title>Practice Feedback</h2>
+
+  <mat-dialog-content>
+    <div class="header-section">
+      <div class="timestamp">
+        {{ data.timestamp | date:'medium' }}
+      </div>
+      <div class="score-section">
+        <div class="score-circle" [style.background]="getScoreColor(data.evaluation.score)">
+          {{ data.evaluation.score }}
+        </div>
+        <div class="result-icon">
+          <mat-icon [class.correct]="data.evaluation.isCorrect" [class.incorrect]="!data.evaluation.isCorrect">
+            {{ data.evaluation.isCorrect ? 'check_circle' : 'cancel' }}
+          </mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="answer-section">
+      <h3>Your Answer:</h3>
+      <div class="answer-text">{{ data.userAnswer }}</div>
+    </div>
+
+    <div class="feedback-section">
+      <h3>Feedback:</h3>
+      <p>{{ data.evaluation.feedback }}</p>
+    </div>
+
+    <div class="details-section">
+      <div class="weaknesses" *ngIf="data.evaluation.weaknesses.length > 0">
+        <h3>Areas to Work On:</h3>
+        <ul>
+          <li *ngFor="let weakness of data.evaluation.weaknesses">
+            {{ weakness }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="improvement-areas">
+        <div *ngIf="data.evaluation.improvementAreas.words.length > 0">
+          <h3>Words to Practice:</h3>
+          <div class="tag-list">
+            <span *ngFor="let word of data.evaluation.improvementAreas.words" class="tag needs-work">
+              {{ word }}
+            </span>
+          </div>
+        </div>
+
+        <div *ngIf="data.evaluation.improvementAreas.skills.length > 0">
+          <h3>Skills to Improve:</h3>
+          <div class="tag-list">
+            <span *ngFor="let skill of data.evaluation.improvementAreas.skills" class="tag needs-work">
+              {{ skill }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="strengths" *ngIf="data.evaluation.strengths.words.length > 0 || data.evaluation.strengths.skills.length > 0">
+        <h3>Well Done With:</h3>
+        <div class="tag-list">
+          <span *ngFor="let word of data.evaluation.strengths.words" class="tag good">
+            {{ word }}
+          </span>
+          <span *ngFor="let skill of data.evaluation.strengths.skills" class="tag good">
+            {{ skill }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+</div>

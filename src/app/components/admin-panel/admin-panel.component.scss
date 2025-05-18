@@ -1,0 +1,138 @@
+.admin-panel {
+  padding: 24px;
+  width: 100%;
+  box-sizing: border-box;
+
+  .history-section {
+    margin-top: 24px;
+  }
+
+  .history-table {
+    .clickable-row {
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.04);
+      }
+    }
+    width: 100%;
+
+    .answer-cell {
+      max-width: 300px;
+      .answer-text {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .score-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin: 0 auto;
+    }
+
+    mat-icon {
+      &.correct {
+        color: #4caf50;
+      }
+      &.incorrect {
+        color: #f44336;
+      }
+    }
+  }
+
+  section {
+    background: #2c2c2c;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    h2 {
+      color: #ffffff;
+      margin: 0 0 24px;
+      font-size: 1.5rem;
+    }
+  }
+
+  .add-form {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    mat-form-field {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    button {
+      margin-top: 4px;
+    }
+  }
+
+  .items-table {
+    width: 100%;
+    background: transparent;
+
+    .mat-mdc-header-cell {
+      color: #b3b3b3;
+      font-weight: 500;
+    }
+
+    .mat-mdc-cell {
+      color: #ffffff;
+    }
+
+    .proficiency-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .progress-bar {
+        flex: 1;
+        height: 6px;
+        background: #4a4a4a;
+        border-radius: 3px;
+        overflow: hidden;
+        max-width: 100px;
+
+        .progress {
+          height: 100%;
+          background: #4caf50;
+          transition: width 0.3s ease;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-panel {
+    padding: 16px;
+
+    section {
+      padding: 16px;
+    }
+
+    .add-form {
+      flex-direction: column;
+      
+      mat-form-field {
+        width: 100%;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
