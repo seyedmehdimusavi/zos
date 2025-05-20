@@ -1,38 +1,5 @@
-<!-- <div class="container">
-  <h1>Firebase Test</h1>
-  
-  <div class="button-container">
-    <button mat-raised-button color="primary" (click)="readData()">
-      Read from Firebase
-    </button>
-    
-    <button mat-raised-button color="accent" (click)="writeData()">
-      Write to Firebase
-    </button>
-  </div>
+<app-nav></app-nav>
 
-  <div *ngIf="data" class="data-container">
-    <h3>Data from Firebase:</h3>
-    <pre>{{ data | json }}</pre>
-  </div>
-</div> -->
-
-
-
-<!-- <div class="container">
-  <h1>Gemini Test</h1>
-  
-  <div class="button-container">
-    <button mat-raised-button color="primary" (click)="sendPrompt()">
-      Send Prompt to Gemini
-    </button>
-  </div>
-
-  <div *ngIf="data" class="data-container">
-    <h3>Data from Gemini:</h3>
-    <pre>{{ data | json }}</pre>
-  </div>
-</div> -->
-
-
-<router-outlet />
+<main class="main-content">
+  <router-outlet />
+</main>

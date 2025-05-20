@@ -1,0 +1,50 @@
+<div class="quiz-container">
+  <mat-card class="quiz-header">
+    <mat-card-header>
+      <mat-card-title>Word Quiz</mat-card-title>
+      <mat-card-subtitle>Test your knowledge with 10 questions</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+      
+      <div *ngIf="quizSubmitted" class="score-display">
+        <h2>Your Score: {{score}}%</h2>
+        <button mat-raised-button color="primary" (click)="generateQuiz()">
+          Try Another Quiz
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="questions-list">
+    <mat-card *ngFor="let question of questions" class="question-card" [ngClass]="getQuestionStatus(question)">
+      <mat-card-header>
+        <mat-card-title>Question {{question.id}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="question-text">{{question.question}}</p>
+        
+        <mat-radio-group [(ngModel)]="question.selectedAnswer" [disabled]="quizSubmitted" class="options-group">
+          <mat-radio-button *ngFor="let option of question.options" [value]="option" class="option-button">
+            {{option}}
+          </mat-radio-button>
+        </mat-radio-group>
+
+        <div *ngIf="quizSubmitted" class="feedback">
+          <p *ngIf="question.selectedAnswer === question.correctAnswer" class="correct-answer">
+            Correct! ✓
+          </p>
+          <p *ngIf="question.selectedAnswer !== question.correctAnswer" class="wrong-answer">
+            Incorrect. The correct answer is: {{question.correctAnswer}}
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="quiz-actions" *ngIf="!quizSubmitted && questions.length > 0">
+    <button mat-raised-button color="primary" (click)="submitQuiz()" [disabled]="!allQuestionsAnswered()">
+      Submit Quiz
+    </button>
+  </div>
+</div>

@@ -4,16 +4,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { FirebaseService } from './services/firebase.service';
 import { GeminiService } from './services/gemini.service';
+import { NavComponent } from './components/nav/nav.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatButtonModule, CommonModule],
+  imports: [RouterOutlet, MatButtonModule, CommonModule, NavComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'oscarEnglish';
+  title = 'Oscar English';
   data: any = null;
 
   constructor(private firebaseService: FirebaseService,private geminiService: GeminiService) {}
