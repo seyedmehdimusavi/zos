@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { JsonPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FirebaseService } from './services/firebase.service';
 import { GeminiService } from './services/gemini.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatButtonModule, JsonPipe, CommonModule],
+  imports: [RouterOutlet, MatButtonModule, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -61,3 +61,7 @@ export class AppComponent {
     }
   }
 }
+
+
+// ng build --configuration production --base-href=/zos/
+// npx angular-cli-ghpages --dir=dist/oscar-english

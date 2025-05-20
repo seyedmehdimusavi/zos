@@ -65,17 +65,31 @@
 
   .add-form {
     display: flex;
-    gap: 16px;
+    gap: 1rem;
     align-items: flex-start;
-    flex-wrap: wrap;
+    margin-bottom: 2rem;
 
     mat-form-field {
       flex: 1;
-      min-width: 200px;
     }
 
     button {
-      margin-top: 4px;
+      margin-top: 0.3rem;
+    }
+  }
+
+  .bulk-add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    .bulk-textarea {
+      width: 100%;
+    }
+
+    button {
+      align-self: flex-start;
     }
   }
 

@@ -44,6 +44,8 @@ export class AdminPanelComponent implements OnInit {
     lastPracticed: null
   };
 
+  bulkWords: string = '';
+
   constructor(
     private englishService: EnglishLearningService,
     private snackBar: MatSnackBar,
@@ -98,6 +100,43 @@ export class AdminPanelComponent implements OnInit {
       await this.loadItems();
     } catch (error) {
       this.snackBar.open('Error adding item', 'Close', { duration: 3000 });
+    }
+  }
+
+  async addBulkWords() {
+    if (!this.bulkWords.trim()) {
+      this.snackBar.open('Please enter some words', 'Close', { duration: 3000 });
+      return;
+    }
+
+    const words = this.bulkWords
+      .split('\n')
+      .map(word => word.trim().toLowerCase())
+      .filter(word => word.length > 0);
+
+    if (words.length === 0) {
+      this.snackBar.open('No valid words found', 'Close', { duration: 3000 });
+      return;
+    }
+
+    try {
+      let addedCount = 0;
+      for (const word of words) {
+        await this.englishService.addLearningItem({
+          name: word,
+          type: 'word',
+          proficiency: 0,
+          needsImprovement: true,
+          lastPracticed: null
+        });
+        addedCount++;
+      }
+      
+      this.snackBar.open(`Successfully added ${addedCount} words`, 'Close', { duration: 3000 });
+      this.bulkWords = '';
+      await this.loadItems();
+    } catch (error) {
+      this.snackBar.open('Error adding words', 'Close', { duration: 3000 });
     }
   }
 

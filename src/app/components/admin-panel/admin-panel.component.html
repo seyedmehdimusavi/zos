@@ -20,6 +20,19 @@
         Add Item
       </button>
     </div>
+
+    <h3>Bulk Add Words</h3>
+    <div class="bulk-add-form">
+      <mat-form-field appearance="outline" class="bulk-textarea">
+        <mat-label>Enter words (one per line)</mat-label>
+        <textarea matInput [(ngModel)]="bulkWords" placeholder="Enter words here..." rows="5"></textarea>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="addBulkWords()">
+        <mat-icon>playlist_add</mat-icon>
+        Add Words
+      </button>
+    </div>
   </section>
 
   <section class="items-list-section">
