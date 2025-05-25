@@ -104,6 +104,30 @@ export class AdminPanelComponent implements OnInit {
     this.practiceHistoryDataSource.data = practiceResults;
   }
 
+  async clearQuizHistory() {
+    try {
+      await this.englishService.clearQuizHistory();
+      this.quizHistory = [];
+      this.quizHistoryDataSource.data = [];
+      this.snackBar.open('Quiz history cleared successfully', 'Close', { duration: 3000 });
+    } catch (error) {
+      console.error('Error clearing quiz history:', error);
+      this.snackBar.open('Error clearing quiz history', 'Close', { duration: 3000 });
+    }
+  }
+
+  async clearPracticeHistory() {
+    try {
+      await this.englishService.clearPracticeHistory();
+      this.practiceHistory = [];
+      this.practiceHistoryDataSource.data = [];
+      this.snackBar.open('Practice history cleared successfully', 'Close', { duration: 3000 });
+    } catch (error) {
+      console.error('Error clearing practice history:', error);
+      this.snackBar.open('Error clearing practice history', 'Close', { duration: 3000 });
+    }
+  }
+
   async loadQuizzes() {
     this.quizzes = await this.englishService.getQuizzes();
   }

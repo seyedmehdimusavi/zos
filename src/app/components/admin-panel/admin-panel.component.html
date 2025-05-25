@@ -8,7 +8,13 @@
 
 
   <section class="quiz-history-section">
-    <h2>Quiz History</h2>
+    <div class="section-header">
+      <h2>Quiz History</h2>
+      <button mat-button color="warn" (click)="clearQuizHistory()" [disabled]="quizHistory.length === 0">
+        <mat-icon>delete</mat-icon>
+        Clear History
+      </button>
+    </div>
     <div *ngIf="quizHistory.length === 0" class="no-data-message">
       No quiz attempts yet.
     </div>
@@ -57,7 +63,13 @@
   <mat-divider class="section-divider"></mat-divider>
 
   <section class="history-section">
-    <h2>Practice History</h2>
+    <div class="section-header">
+      <h2>Practice History</h2>
+      <button mat-button color="warn" (click)="clearPracticeHistory()" [disabled]="practiceHistory.length === 0">
+        <mat-icon>delete</mat-icon>
+        Clear History
+      </button>
+    </div>
     <div *ngIf="practiceHistory.length === 0" class="no-data-message">
       No practice attempts yet.
     </div>

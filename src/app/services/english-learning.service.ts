@@ -63,9 +63,11 @@ export class EnglishLearningService {
 
   async getPracticeHistory(): Promise<PracticeResponse[]> {
     const data = await this.firebaseService.getData(this.PRACTICE_HISTORY_PATH);
-    return Object.values(data || {}).map(item => item as PracticeResponse).sort((a, b) => 
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    );
+    return data ? Object.values(data) : [];
+  }
+
+  async clearPracticeHistory(): Promise<void> {
+    await this.firebaseService.setData(this.PRACTICE_HISTORY_PATH, null);
   }
 
   async getAverageScore(): Promise<number> {
@@ -232,6 +234,10 @@ ${practice.correctAnswer ? `Correct Answer: ${practice.correctAnswer}` : ''}`;
       console.error('Error submitting quiz result:', error);
       throw error;
     }
+  }
+
+  async clearQuizHistory(): Promise<void> {
+    await this.firebaseService.setData(this.QUIZ_RESULTS_PATH, null);
   }
 
   async getQuizResults(quizId?: string, limit: number = 20): Promise<QuizResult[]> {
