@@ -1,0 +1,180 @@
+[
+    {
+      "word": "abandoned",
+      "description": "Left behind and not cared for anymore."
+    },
+    {
+      "word": "able",
+      "description": "Having the power or skill to do something."
+    },
+    {
+      "word": "aboard",
+      "description": "On or inside a ship, train, or airplane."
+    },
+    {
+      "word": "about",
+      "description": "Telling something related to a topic or near a place."
+    },
+    {
+      "word": "above",
+      "description": "In a higher position than something else."
+    },
+    {
+      "word": "absolutely",
+      "description": "Completely or totally."
+    },
+    {
+      "word": "accelerating",
+      "description": "Going faster and faster."
+    },
+    {
+      "word": "access",
+      "description": "The way to get to a place or use something."
+    },
+    {
+      "word": "accidentally",
+      "description": "Happening without meaning to do it."
+    },
+    {
+      "word": "accommodation",
+      "description": "A place where you stay or live, like a hotel or house."
+    }
+  ]
+  
+
+
+
+
+
+
+
+
+
+
+
+ 
+// words = [
+//     "agreeable", "aisle", "alien", "allergic", "almost", "along", "also", "although", "always", "amuse",
+//     "animal", "annihilate", "annoyance", "annual", "another", "answer", "anybody", "anyone", "anywhere",
+//     "appear", "appearance", "appreciated", "appropriate", "archaeology", "area", "aren’t", "around",
+//     "arrive", "asleep", "assess", "attach", "attachment", "attempt", "attention", "attractive", "auction",
+//     "author", "autograph", "away", "awesome", "awkwardly", "bad", "baby", "backyard", "bare", "barely",
+//     "bark", "baulk", "beach", "beaks", "beautiful", "beauty", "because", "before", "behave", "behaviours",
+//     "behind", "beige", "being", "bell", "belligerence", "belly", "below", "benefit", "benefited",
+//     "benevolent", "best", "between", "beware", "bigger", "bike", "bird", "birthday", "blasé", "bleed",
+//     "blend", "blind", "block", "blow", "bodies", "book", "bottom", "bough", "bought", "boulder", "boundary",
+//     "bounty", "breathless", "brethren", "brevity", "brief", "brilliance", "bring", "brusque", "buoy",
+//     "burglar", "business", "can", "cake", "calm", "camouflage", "carcasses", "carriage", "carries", "catch",
+//     "category", "celebration", "certain", "chain", "chalk", "change", "changeable", "character", "chase",
+//     "cheek", "cheques", "chest", "child", "chocolate", "circuit", "city", "clap", "class", "claw", "clean",
+//     "climatic", "climb", "clock", "close", "college", "colloquial", "colossal", "colour/color", "column",
+//     "community", "competence", "competition", "complaining", "complementary", "complete", "complimentary",
+//     "concerned", "confidence", "conscience", "conscious", "consequently", "consider", "considerate",
+//     "contain", "continued", "contraptions", "convince", "coordinator", "corpses", "correspond", "cough",
+//     "could", "couple", "courageous", "crab", "cracked", "crash", "creature", "crevice", "crime",
+//     "criminal", "crowd", "crystal", "curious", "cylinder", "day", "damage", "dangerous", "dark", "dead",
+//     "debris", "decided", "decision", "decomposed", "decorate", "deep", "defence", "deficient", "definitely",
+//     "delicious", "demolished", "demonstrate", "dependency", "depot", "depression", "deprived"
+// ]
+
+# Generate simple definitions for each word
+definitions = {
+    "agreeable": "Nice or pleasant.",
+    "aisle": "A walkway between rows of seats or shelves.",
+    "alien": "A being from another world or planet.",
+    "allergic": "Having a bad reaction to something like pollen or nuts.",
+    "almost": "Very nearly but not quite.",
+    "along": "Moving in a line next to something.",
+    "also": "In addition; too.",
+    "although": "Even though something else happened.",
+    "always": "At all times; every time.",
+    "amuse": "To make someone laugh or smile.",
+    "animal": "A living creature like a dog or a cat.",
+    "annihilate": "To destroy something completely.",
+    "annoyance": "Something that makes you a little angry.",
+    "annual": "Happening once a year.",
+    "another": "One more; a different one.",
+    "answer": "A reply to a question.",
+    "anybody": "Any person at all.",
+    "anyone": "Any person.",
+    "anywhere": "In any place.",
+    "appear": "To come into view.",
+    "appearance": "The way something or someone looks.",
+    "appreciated": "Liked or valued.",
+    "appropriate": "Right or suitable for the situation.",
+    "archaeology": "The study of old things from the past.",
+    "area": "A space or part of a place.",
+    "aren’t": "Short for 'are not'.",
+    "around": "In a circle or nearby.",
+    "arrive": "To reach a place.",
+    "asleep": "Not awake; sleeping.",
+    "assess": "To look at something and decide about it.",
+    "attach": "To stick or join something.",
+    "attachment": "Something that is added or stuck on.",
+    "attempt": "To try to do something.",
+    "attention": "Focusing your mind on something.",
+    "attractive": "Nice to look at.",
+    "auction": "A sale where people offer money for things.",
+    "author": "Someone who writes books.",
+    "autograph": "A person’s written signature.",
+    "away": "Not here; in another place.",
+    "awesome": "Very cool or amazing.",
+    "awkwardly": "In a clumsy or uncomfortable way.",
+    "bad": "Not good.",
+    "baby": "A very young child.",
+    "backyard": "The outdoor area behind a house.",
+    "bare": "Not covered; empty.",
+    "barely": "Only just.",
+    "bark": "The sound a dog makes or the outer layer of a tree.",
+    "baulk": "To stop and not want to continue.",
+    "beach": "The sandy area near the ocean.",
+    "beaks": "The hard mouthparts of birds.",
+    "beautiful": "Very nice to look at.",
+    "beauty": "The quality of being beautiful.",
+    "because": "Gives a reason why.",
+    "before": "Earlier than something else.",
+    "behave": "To act in a good way.",
+    "behaviours": "The ways someone acts.",
+    "behind": "At the back of something.",
+    "beige": "A light brown color.",
+    "being": "A living creature.",
+    "bell": "A metal object that makes a ringing sound.",
+    "belligerence": "A feeling of wanting to fight.",
+    "belly": "Another word for stomach.",
+    "below": "Lower than something else.",
+    "benefit": "Something good that you get.",
+    "benefited": "Got something good from something.",
+    "benevolent": "Kind and helpful.",
+    "best": "Better than all the rest.",
+    "between": "In the middle of two things.",
+    "beware": "Be careful of danger.",
+    "bigger": "Larger in size.",
+    "bike": "A bicycle.",
+    "bird": "An animal with wings and feathers.",
+    "birthday": "The day you were born.",
+    "blasé": "Not caring or interested.",
+    "bleed": "To lose blood.",
+    "blend": "To mix things together.",
+    "blind": "Not able to see.",
+    "block": "A solid piece of something or to stop something.",
+    "blow": "To push air or hit hard.",
+    "bodies": "Plural of body.",
+    "book": "A set of pages with writing.",
+    "bottom": "The lowest part of something.",
+    "bough": "A large branch of a tree.",
+    "bought": "The past tense of 'buy'.",
+    "boulder": "A very big rock.",
+    "boundary": "The edge of an area.",
+    "bounty": "A large reward or gift.",
+    "breathless": "Out of breath.",
+    "brethren": "Old word for brothers or people in a group.",
+    "brevity": "Being short or quick.",
+    "brief": "Short in time.",
+    "brilliance": "Being very bright or smart.",
+    "bring": "To take something with you.",
+    "brusque": "Speaking in a very short, rough way.",
+    "buoy": "A floating marker in water.",
+    "burglar": "A person who steals from houses.",
+    "business": "Work that sells goods or services."
+}
+

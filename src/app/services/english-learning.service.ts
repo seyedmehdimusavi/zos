@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FirebaseService } from './firebase.service';
 import { GeminiService } from './gemini.service';
 import { LearningItem, Practice, PracticeResponse } from '../models/english-learning.model';
+import { Quiz, QuizResult } from '../models/quiz.model';
 import { Observable, from, map, switchMap } from 'rxjs';
 
 @Injectable({
@@ -10,6 +11,8 @@ import { Observable, from, map, switchMap } from 'rxjs';
 export class EnglishLearningService {
   private readonly LEARNING_ITEMS_PATH = 'learningItems';
   private readonly PRACTICE_HISTORY_PATH = 'practiceHistory';
+  private readonly QUIZZES_PATH = 'quizzes';
+  private readonly QUIZ_RESULTS_PATH = 'quizResults';
 
   constructor(
     private firebaseService: FirebaseService,
@@ -187,6 +190,43 @@ ${practice.correctAnswer ? `Correct Answer: ${practice.correctAnswer}` : ''}`;
         return response;
       })
     );
+  }
+
+  async addQuiz(quiz: Quiz): Promise<void> {
+    const quizId = new Date().getTime().toString();
+    await this.firebaseService.setData(`${this.QUIZZES_PATH}/${quizId}`, {
+      ...quiz,
+      id: quizId
+    });
+  }
+
+  async deleteQuiz(quizId: string): Promise<void> {
+    await this.firebaseService.deleteData(`${this.QUIZZES_PATH}/${quizId}`);
+  }
+
+  async getQuizzes(): Promise<Quiz[]> {
+    const data = await this.firebaseService.getData(this.QUIZZES_PATH);
+    return Object.values(data || {}).map(item => item as Quiz).sort((a: Quiz, b: Quiz) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  async submitQuizResult(result: QuizResult): Promise<void> {
+    const resultId = new Date().getTime().toString();
+    await this.firebaseService.setData(`${this.QUIZ_RESULTS_PATH}/${resultId}`, {
+      ...result,
+      id: resultId
+    });
+  }
+
+  async getQuizResults(quizId: string): Promise<QuizResult[]> {
+    const data = await this.firebaseService.getData(this.QUIZ_RESULTS_PATH);
+    return Object.values(data || {})
+      .map(item => item as QuizResult)
+      .filter(result => result.quizId === quizId)
+      .sort((a, b) => 
+        new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
+      );
   }
 
   private async updateLearningItems(response: PracticeResponse): Promise<void> {

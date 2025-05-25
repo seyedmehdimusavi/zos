@@ -1,0 +1,76 @@
+<div class="quiz-container">
+  <!-- Quiz Selection -->
+  <div class="quiz-selection" *ngIf="!selectedQuiz">
+    <h2>Available Quizzes</h2>
+    <div class="quiz-list">
+      <mat-card *ngFor="let quiz of quizzes" class="quiz-card">
+        <mat-card-header>
+          <mat-card-title>{{quiz.title}}</mat-card-title>
+          <mat-card-subtitle>{{quiz.questions.length}} questions</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="startQuiz(quiz)">
+            Start Quiz
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Quiz Taking -->
+  <div class="quiz-taking" *ngIf="selectedQuiz && !quizCompleted">
+    <h2>{{selectedQuiz.title}}</h2>
+    <div class="progress">
+      Question {{currentQuestionIndex + 1}} of {{selectedQuiz.questions.length}}
+    </div>
+
+    <mat-card class="question-card" *ngIf="currentQuestion">
+      <mat-card-content>
+        <p class="question">{{currentQuestion.question}}</p>
+        <mat-radio-group [ngModel]="userAnswers[currentQuestionIndex]" 
+                         (ngModelChange)="selectAnswer($event)"
+                         class="answer-options">
+          <mat-radio-button [value]="0">{{currentQuestion.answer1}}</mat-radio-button>
+          <mat-radio-button [value]="1">{{currentQuestion.answer2}}</mat-radio-button>
+          <mat-radio-button [value]="2">{{currentQuestion.answer3}}</mat-radio-button>
+          <mat-radio-button [value]="3">{{currentQuestion.answer4}}</mat-radio-button>
+        </mat-radio-group>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="navigation-buttons">
+      <button mat-raised-button (click)="previousQuestion()"
+              [disabled]="currentQuestionIndex === 0">
+        Previous
+      </button>
+      <button mat-raised-button (click)="nextQuestion()"
+              [disabled]="!selectedQuiz || currentQuestionIndex === selectedQuiz.questions.length - 1">
+        Next
+      </button>
+      <button mat-raised-button color="primary" (click)="submitQuiz()"
+              [disabled]="!canSubmit">
+        Submit Quiz
+      </button>
+    </div>
+  </div>
+
+  <!-- Quiz Results -->
+  <div class="quiz-results" *ngIf="quizCompleted">
+    <mat-card class="results-card">
+      <mat-card-header>
+        <mat-card-title>Quiz Results</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h3>Your Score: {{score}}%</h3>
+        <p *ngIf="score >= 80" class="success-message">Excellent work! Keep it up!</p>
+        <p *ngIf="score >= 60 && score < 80" class="good-message">Good job! Room for improvement.</p>
+        <p *ngIf="score < 60" class="needs-improvement-message">Keep practicing to improve your score.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="resetQuiz()">
+          Try Another Quiz
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

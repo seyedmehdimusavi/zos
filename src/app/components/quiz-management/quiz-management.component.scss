@@ -1,0 +1,66 @@
+.quiz-management {
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 24px;
+    color: #333;
+  }
+
+  .upload-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 800px;
+    margin-bottom: 32px;
+
+    .title-input {
+      width: 100%;
+    }
+
+    .json-input {
+      width: 100%;
+    }
+
+    button {
+      align-self: flex-start;
+      
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .quizzes-list {
+    h3 {
+      margin-bottom: 16px;
+      color: #444;
+    }
+
+    table {
+      width: 100%;
+
+      .mat-column-title {
+        width: 30%;
+      }
+
+      .mat-column-questions {
+        width: 20%;
+      }
+
+      .mat-column-createdAt {
+        width: 35%;
+      }
+
+      .mat-column-actions {
+        width: 15%;
+        text-align: center;
+      }
+    }
+  }
+
+  .no-quizzes {
+    margin-top: 32px;
+    color: #666;
+    font-style: italic;
+  }
+}

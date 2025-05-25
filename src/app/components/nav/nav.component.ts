@@ -21,7 +21,8 @@ import { MatIconModule } from '@angular/material/icon';
 export class NavComponent {
   navItems = [
     { path: '/practice', icon: 'school', label: 'Practice' },
-    { path: '/quiz', icon: 'quiz', label: 'Word Quiz' },
+    { path: '/word-quiz', icon: 'abc', label: 'Word Quiz' },
+    { path: '/quiz', icon: 'quiz', label: 'Quizzes' },
     { path: '/admin', icon: 'admin_panel_settings', label: 'Admin' }
   ];
 }

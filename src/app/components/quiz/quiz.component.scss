@@ -1,0 +1,96 @@
+.quiz-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  h2 {
+    margin-bottom: 24px;
+    color: #333;
+  }
+
+  .quiz-selection {
+    .quiz-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+
+      .quiz-card {
+        mat-card-header {
+          margin-bottom: 16px;
+        }
+
+        mat-card-actions {
+          padding: 16px;
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+    }
+  }
+
+  .quiz-taking {
+    .progress {
+      margin-bottom: 20px;
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .question-card {
+      margin-bottom: 24px;
+
+      .question {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .answer-options {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        mat-radio-button {
+          margin-bottom: 8px;
+        }
+      }
+    }
+
+    .navigation-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      margin-top: 24px;
+    }
+  }
+
+  .quiz-results {
+    .results-card {
+      text-align: center;
+      padding: 24px;
+
+      h3 {
+        font-size: 2em;
+        margin: 24px 0;
+        color: #333;
+      }
+
+      .success-message {
+        color: #4caf50;
+      }
+
+      .good-message {
+        color: #ff9800;
+      }
+
+      .needs-improvement-message {
+        color: #f44336;
+      }
+
+      mat-card-actions {
+        margin-top: 24px;
+        display: flex;
+        justify-content: center;
+      }
+    }
+  }
+}

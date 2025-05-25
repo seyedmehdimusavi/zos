@@ -8,6 +8,8 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { QuizManagementComponent } from '../quiz-management/quiz-management.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PracticeFeedbackDialogComponent } from '../practice-feedback-dialog/practice-feedback-dialog.component';
 import { EnglishLearningService } from '../../services/english-learning.service';
@@ -27,7 +29,9 @@ import { LearningItem, PracticeResponse } from '../../models/english-learning.mo
     MatSnackBarModule,
     MatTableModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    MatDividerModule,
+    QuizManagementComponent
   ]
 })
 export class AdminPanelComponent implements OnInit {
