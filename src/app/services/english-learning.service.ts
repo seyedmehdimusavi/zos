@@ -212,30 +212,65 @@ ${practice.correctAnswer ? `Correct Answer: ${practice.correctAnswer}` : ''}`;
   }
 
   async submitQuizResult(result: QuizResult): Promise<void> {
-    const resultId = new Date().getTime().toString();
-    await this.firebaseService.setData(`${this.QUIZ_RESULTS_PATH}/${resultId}`, {
-      ...result,
-      id: resultId
-    });
+    try {
+      console.log('Submitting quiz result:', result);
+      const resultId = new Date().getTime().toString();
+      const timestamp = new Date().toISOString();
+      
+      const quizResult = {
+        ...result,
+        id: resultId,
+        completedAt: timestamp
+      };
+      
+      console.log('Saving quiz result to path:', `${this.QUIZ_RESULTS_PATH}/${resultId}`);
+      console.log('Quiz result data:', quizResult);
+      
+      await this.firebaseService.setData(`${this.QUIZ_RESULTS_PATH}/${resultId}`, quizResult);
+      console.log('Quiz result saved successfully');
+    } catch (error) {
+      console.error('Error submitting quiz result:', error);
+      throw error;
+    }
   }
 
   async getQuizResults(quizId?: string, limit: number = 20): Promise<QuizResult[]> {
-    // Get the data with orderByChild and limitToLast
-    const data = await this.firebaseService.getDataOrdered({
-      path: this.QUIZ_RESULTS_PATH,
-      orderByChild: 'completedAt',
-      limitToLast: limit
-    });
+    try {
+      console.log('Fetching quiz results from path:', this.QUIZ_RESULTS_PATH);
+      // Get all quiz results
+      const data = await this.firebaseService.getData(this.QUIZ_RESULTS_PATH);
 
-    const results = Object.values(data || {}).map(item => item as QuizResult);
-    
-    if (quizId) {
-      return results
-        .filter(result => result.quizId === quizId)
-        .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime());
+      console.log('Raw data from Firebase:', data);
+
+      if (!data) {
+        console.log('No data found in Firebase');
+        return [];
+      }
+
+      const results = Object.values(data).map(item => {
+        console.log('Processing quiz result item:', item);
+        return item as QuizResult;
+      });
+      
+      console.log('Mapped results:', results);
+
+      const sortedResults = results
+        .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
+        .slice(0, limit);
+
+      console.log('Sorted and limited results:', sortedResults);
+
+      if (quizId) {
+        const filteredResults = sortedResults.filter(result => result.quizId === quizId);
+        console.log('Filtered results for quizId', quizId, ':', filteredResults);
+        return filteredResults;
+      }
+
+      return sortedResults;
+    } catch (error) {
+      console.error('Error fetching quiz results:', error);
+      return [];
     }
-    
-    return results.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime());
   }
 
   private async updateLearningItems(response: PracticeResponse): Promise<void> {

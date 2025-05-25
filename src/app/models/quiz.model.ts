@@ -19,5 +19,5 @@ export interface QuizResult {
   quizId: string;
   score: number;
   totalQuestions: number;
-  completedAt: Date;
+  completedAt: string;
 }

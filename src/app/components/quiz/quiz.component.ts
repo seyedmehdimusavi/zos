@@ -98,39 +98,53 @@ export class QuizComponent implements OnInit {
   }
 
   async submitQuiz() {
-    if (!this.selectedQuiz || !this.canSubmit) return;
+    if (!this.selectedQuiz || !this.canSubmit) {
+      console.log('Cannot submit quiz:', { 
+        selectedQuiz: !!this.selectedQuiz, 
+        canSubmit: this.canSubmit 
+      });
+      return;
+    }
 
     try {
       // Calculate score
       let correctAnswers = 0;
-      console.log('Calculating score...');
+      console.log('Starting quiz submission process...');
+      console.log('Selected quiz:', this.selectedQuiz);
+      
       this.selectedQuiz.questions.forEach((question, index) => {
         const userAnswer = this.userAnswers[index];
-        console.log(`Question ${index + 1}:`);
-        console.log(`- User answer: ${userAnswer + 1}`);
-        console.log(`- Correct answer: ${question.correctOptionNumber}`);
+        console.log(`Question ${index + 1}:`, {
+          questionText: question.question,
+          userAnswer: userAnswer + 1,
+          correctAnswer: question.correctOptionNumber,
+          isCorrect: userAnswer + 1 === question.correctOptionNumber
+        });
+        
         if (userAnswer + 1 === question.correctOptionNumber) {
           correctAnswers++;
-          console.log('- Correct!');
-        } else {
-          console.log('- Incorrect');
         }
       });
 
-      console.log(`Total correct answers: ${correctAnswers}`);
-      console.log(`Total questions: ${this.selectedQuiz.questions.length}`);
-      
       this.score = Math.round((correctAnswers / this.selectedQuiz.questions.length) * 100);
-      console.log(`Final score: ${this.score}%`);
+      console.log('Quiz results:', {
+        correctAnswers,
+        totalQuestions: this.selectedQuiz.questions.length,
+        score: this.score
+      });
+      
       this.quizCompleted = true;
 
       // Save result to Firebase
-      await this.englishService.submitQuizResult({
+      const quizResult = {
         quizId: this.selectedQuiz.id!,
         score: this.score,
         totalQuestions: this.selectedQuiz.questions.length,
-        completedAt: new Date()
-      });
+        completedAt: new Date().toISOString()
+      };
+      
+      console.log('Submitting quiz result to Firebase:', quizResult);
+      await this.englishService.submitQuizResult(quizResult);
     } catch (error) {
       this.snackBar.open('Error submitting quiz results', 'Close', { duration: 3000 });
     }

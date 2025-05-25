@@ -58,12 +58,32 @@ export class AdminPanelComponent implements OnInit {
 
   async loadQuizHistory() {
     try {
+      console.log('Loading quiz history...');
       const results = await this.englishService.getQuizResults();
-      this.quizHistory = results.map(result => ({
-        ...result,
-        completedAt: new Date(result.completedAt)
-      }));
-      console.log('Quiz history loaded:', this.quizHistory);
+      console.log('Raw quiz results:', results);
+      
+      if (!results || results.length === 0) {
+        console.log('No quiz results found');
+        this.quizHistory = [];
+        return;
+      }
+      
+      this.quizHistory = results.map(result => {
+        console.log('Processing quiz result:', {
+          id: result.id,
+          quizId: result.quizId,
+          score: result.score,
+          completedAt: result.completedAt,
+          totalQuestions: result.totalQuestions
+        });
+        return result;
+      });
+      
+      console.log('Quiz history processed:', {
+        totalResults: this.quizHistory.length,
+        firstResult: this.quizHistory[0],
+        lastResult: this.quizHistory[this.quizHistory.length - 1]
+      });
     } catch (error) {
       console.error('Error loading quiz history:', error);
       this.snackBar.open('Error loading quiz history', 'Close', { duration: 3000 });
