@@ -20,4 +20,5 @@ export interface QuizResult {
   score: number;
   totalQuestions: number;
   completedAt: string;
+  formattedDate?: string;
 }

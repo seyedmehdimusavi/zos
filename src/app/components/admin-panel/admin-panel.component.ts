@@ -69,6 +69,23 @@ export class AdminPanelComponent implements OnInit {
       }
       
       this.quizHistory = results.map(result => {
+        // Format the date string
+        if (result.completedAt) {
+          result.formattedDate = this.formatDate(result.completedAt);
+        } else {
+          result.formattedDate = 'Unknown';
+        }
+        // Ensure completedAt is a valid date string
+        if (result.completedAt) {
+          try {
+            const date = new Date(result.completedAt);
+            if (!isNaN(date.getTime())) {
+              result.completedAt = date.toISOString();
+            }
+          } catch (e) {
+            console.error('Error parsing date:', result.completedAt, e);
+          }
+        }
         console.log('Processing quiz result:', {
           id: result.id,
           quizId: result.quizId,
@@ -110,6 +127,27 @@ export class AdminPanelComponent implements OnInit {
       maxWidth: '90vw',
       maxHeight: '90vh'
     });
+  }
+
+  formatDate(dateStr: string): string {
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+      }
+      
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      
+      return `${day} ${month} ${year} ${hours}:${minutes}`;
+    } catch (e) {
+      console.error('Error formatting date:', dateStr, e);
+      return 'Invalid Date';
+    }
   }
 
   getScoreColor(score: number): string {
