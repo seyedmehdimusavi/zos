@@ -30,10 +30,18 @@
         <mat-radio-group [ngModel]="userAnswers[currentQuestionIndex]" 
                          (ngModelChange)="selectAnswer($event)"
                          class="answer-options">
-          <mat-radio-button [value]="0">{{currentQuestion.answer1}}</mat-radio-button>
-          <mat-radio-button [value]="1">{{currentQuestion.answer2}}</mat-radio-button>
-          <mat-radio-button [value]="2">{{currentQuestion.answer3}}</mat-radio-button>
-          <mat-radio-button [value]="3">{{currentQuestion.answer4}}</mat-radio-button>
+          <mat-radio-button [value]="0" [checked]="userAnswers[currentQuestionIndex] === 0">
+            {{currentQuestion.answer1}}
+          </mat-radio-button>
+          <mat-radio-button [value]="1" [checked]="userAnswers[currentQuestionIndex] === 1">
+            {{currentQuestion.answer2}}
+          </mat-radio-button>
+          <mat-radio-button [value]="2" [checked]="userAnswers[currentQuestionIndex] === 2">
+            {{currentQuestion.answer3}}
+          </mat-radio-button>
+          <mat-radio-button [value]="3" [checked]="userAnswers[currentQuestionIndex] === 3">
+            {{currentQuestion.answer4}}
+          </mat-radio-button>
         </mat-radio-group>
       </mat-card-content>
     </mat-card>

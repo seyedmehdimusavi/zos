@@ -67,16 +67,21 @@ export class QuizComponent implements OnInit {
   }
 
   startQuiz(quiz: Quiz) {
+    console.log('Starting quiz:', quiz.title);
+    console.log('Number of questions:', quiz.questions.length);
     this.selectedQuiz = quiz;
     this.currentQuestionIndex = 0;
     this.userAnswers = new Array(quiz.questions.length).fill(-1);
     this.quizCompleted = false;
     this.score = 0;
+    console.log('Initial answers array:', this.userAnswers);
   }
 
   selectAnswer(answerIndex: number) {
     if (this.selectedQuiz) {
+      console.log(`Selected answer ${answerIndex + 1} for question ${this.currentQuestionIndex + 1}`);
       this.userAnswers[this.currentQuestionIndex] = answerIndex;
+      console.log('Current answers:', this.userAnswers);
     }
   }
 
@@ -98,13 +103,25 @@ export class QuizComponent implements OnInit {
     try {
       // Calculate score
       let correctAnswers = 0;
+      console.log('Calculating score...');
       this.selectedQuiz.questions.forEach((question, index) => {
-        if (question.correctOptionNumber === this.userAnswers[index] + 1) {
+        const userAnswer = this.userAnswers[index];
+        console.log(`Question ${index + 1}:`);
+        console.log(`- User answer: ${userAnswer + 1}`);
+        console.log(`- Correct answer: ${question.correctOptionNumber}`);
+        if (userAnswer + 1 === question.correctOptionNumber) {
           correctAnswers++;
+          console.log('- Correct!');
+        } else {
+          console.log('- Incorrect');
         }
       });
 
+      console.log(`Total correct answers: ${correctAnswers}`);
+      console.log(`Total questions: ${this.selectedQuiz.questions.length}`);
+      
       this.score = Math.round((correctAnswers / this.selectedQuiz.questions.length) * 100);
+      console.log(`Final score: ${this.score}%`);
       this.quizCompleted = true;
 
       // Save result to Firebase
