@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -25,8 +25,8 @@ import { Quiz, QuizResult } from '../../models/quiz.model';
     CommonModule,
     FormsModule,
     MatButtonModule,
-    MatInputModule,
-    MatSelectModule,
+    MatCardModule,
+    MatRadioModule,
     MatSnackBarModule,
     MatTableModule,
     MatIconModule,
@@ -41,6 +41,10 @@ export class AdminPanelComponent implements OnInit {
   quizHistoryColumns: string[] = ['timestamp', 'quizTitle', 'score', 'questions'];
   practiceHistory: PracticeResponse[] = [];
   historyColumns: string[] = ['timestamp', 'userAnswer', 'score', 'isCorrect'];
+
+  // MatTableDataSource instances
+  quizHistoryDataSource = new MatTableDataSource<QuizResult>();
+  practiceHistoryDataSource = new MatTableDataSource<PracticeResponse>();
 
   constructor(
     private englishService: EnglishLearningService,
@@ -68,38 +72,25 @@ export class AdminPanelComponent implements OnInit {
         return;
       }
       
-      this.quizHistory = results.map(result => {
-        // Format the date string
-        if (result.completedAt) {
-          result.formattedDate = this.formatDate(result.completedAt);
-        } else {
-          result.formattedDate = 'Unknown';
-        }
-        // Ensure completedAt is a valid date string
-        if (result.completedAt) {
-          try {
-            const date = new Date(result.completedAt);
-            if (!isNaN(date.getTime())) {
-              result.completedAt = date.toISOString();
-            }
-          } catch (e) {
-            console.error('Error parsing date:', result.completedAt, e);
-          }
-        }
-        console.log('Processing quiz result:', {
-          id: result.id,
-          quizId: result.quizId,
-          score: result.score,
-          completedAt: result.completedAt,
-          totalQuestions: result.totalQuestions
-        });
+      const mappedResults = results.map(result => {
+        // Use the ID (timestamp) if completedAt is not available
+        const timestamp = result.completedAt || result.id;
+        result.formattedDate = this.formatDate(timestamp);
+
+        // Find the corresponding quiz title
+        const quiz = this.quizzes.find(q => q.id === result.quizId);
+        result.quizTitle = quiz ? quiz.title : 'Unknown Quiz';
+
         return result;
       });
       
+      this.quizHistory = mappedResults;
+      this.quizHistoryDataSource.data = mappedResults;
+      
       console.log('Quiz history processed:', {
-        totalResults: this.quizHistory.length,
-        firstResult: this.quizHistory[0],
-        lastResult: this.quizHistory[this.quizHistory.length - 1]
+        totalResults: mappedResults.length,
+        firstResult: mappedResults[0],
+        lastResult: mappedResults[mappedResults.length - 1]
       });
     } catch (error) {
       console.error('Error loading quiz history:', error);
@@ -108,7 +99,9 @@ export class AdminPanelComponent implements OnInit {
   }
 
   async loadPracticeHistory() {
-    this.practiceHistory = await this.englishService.getPracticeHistory();
+    const practiceResults = await this.englishService.getPracticeHistory();
+    this.practiceHistory = practiceResults;
+    this.practiceHistoryDataSource.data = practiceResults;
   }
 
   async loadQuizzes() {
@@ -129,13 +122,17 @@ export class AdminPanelComponent implements OnInit {
     });
   }
 
-  formatDate(dateStr: string): string {
+  formatDate(dateString: string | number | undefined): string {
     try {
-      const date = new Date(dateStr);
+      if (!dateString) {
+        return 'N/A';
+      }
+      
+      const date = new Date(dateString);
       if (isNaN(date.getTime())) {
         return 'Invalid Date';
       }
-      
+
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       const day = date.getDate();
       const month = months[date.getMonth()];
@@ -144,8 +141,8 @@ export class AdminPanelComponent implements OnInit {
       const minutes = date.getMinutes().toString().padStart(2, '0');
       
       return `${day} ${month} ${year} ${hours}:${minutes}`;
-    } catch (e) {
-      console.error('Error formatting date:', dateStr, e);
+    } catch (error) {
+      console.error('Error formatting date:', error);
       return 'Invalid Date';
     }
   }
@@ -156,5 +153,13 @@ export class AdminPanelComponent implements OnInit {
     if (score >= 50) return '#ffc107';
     if (score >= 30) return '#ff9800';
     return '#f44336';
+  }
+
+  isQuizHistoryRow = (_index: number, item: any): boolean => {
+    return item && 'quizId' in item;
+  }
+
+  isPracticeHistoryRow = (_index: number, item: any): boolean => {
+    return item && 'userAnswer' in item;
   }
 }

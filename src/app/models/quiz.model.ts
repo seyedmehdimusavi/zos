@@ -21,4 +21,5 @@ export interface QuizResult {
   totalQuestions: number;
   completedAt: string;
   formattedDate?: string;
+  quizTitle?: string;
 }

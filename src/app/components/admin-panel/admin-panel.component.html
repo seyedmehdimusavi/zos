@@ -12,7 +12,8 @@
     <div *ngIf="quizHistory.length === 0" class="no-data-message">
       No quiz attempts yet.
     </div>
-    <table mat-table [dataSource]="quizHistory" class="history-table" *ngIf="quizHistory.length > 0">
+    <div *ngIf="quizHistory.length > 0">
+      <table mat-table [dataSource]="quizHistoryDataSource" class="history-table">
       <!-- Timestamp Column -->
       <ng-container matColumnDef="timestamp">
         <th mat-header-cell *matHeaderCellDef>Date & Time</th>
@@ -48,8 +49,9 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="quizHistoryColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: quizHistoryColumns;"></tr>
-    </table>
+      <tr mat-row *matRowDef="let row; columns: quizHistoryColumns"></tr>
+      </table>
+    </div>
   </section>
 
   <mat-divider class="section-divider"></mat-divider>
@@ -59,7 +61,8 @@
     <div *ngIf="practiceHistory.length === 0" class="no-data-message">
       No practice attempts yet.
     </div>
-    <table mat-table [dataSource]="practiceHistory" class="history-table" *ngIf="practiceHistory.length > 0">
+    <div *ngIf="practiceHistory.length > 0">
+      <table mat-table [dataSource]="practiceHistoryDataSource" class="history-table">
       <!-- Timestamp Column -->
       <ng-container matColumnDef="timestamp">
         <th mat-header-cell *matHeaderCellDef>Date & Time</th>
@@ -100,7 +103,8 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="historyColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: historyColumns;" (click)="showFeedback(row)" class="clickable-row"></tr>
-    </table>
+      <tr mat-row *matRowDef="let row; columns: historyColumns" (click)="showFeedback(row)" class="clickable-row"></tr>
+      </table>
+    </div>
   </section>
 </div>
