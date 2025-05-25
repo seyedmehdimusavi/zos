@@ -219,8 +219,14 @@ ${practice.correctAnswer ? `Correct Answer: ${practice.correctAnswer}` : ''}`;
     });
   }
 
-  async getQuizResults(quizId?: string): Promise<QuizResult[]> {
-    const data = await this.firebaseService.getData(this.QUIZ_RESULTS_PATH);
+  async getQuizResults(quizId?: string, limit: number = 20): Promise<QuizResult[]> {
+    // Get the data with orderByChild and limitToLast
+    const data = await this.firebaseService.getDataOrdered({
+      path: this.QUIZ_RESULTS_PATH,
+      orderByChild: 'completedAt',
+      limitToLast: limit
+    });
+
     const results = Object.values(data || {}).map(item => item as QuizResult);
     
     if (quizId) {
