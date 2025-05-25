@@ -38,9 +38,9 @@ import { Quiz, QuizResult } from '../../models/quiz.model';
 export class AdminPanelComponent implements OnInit {
   quizHistory: QuizResult[] = [];
   quizzes: Quiz[] = [];
-  quizHistoryColumns: string[] = ['timestamp', 'quizTitle', 'score', 'questions'];
+  quizHistoryColumns: string[] = ['timestamp', 'quizTitle', 'score', 'questions', 'actions'];
   practiceHistory: PracticeResponse[] = [];
-  historyColumns: string[] = ['timestamp', 'userAnswer', 'score', 'isCorrect'];
+  historyColumns: string[] = ['timestamp', 'userAnswer', 'score', 'isCorrect', 'actions'];
 
   // MatTableDataSource instances
   quizHistoryDataSource = new MatTableDataSource<QuizResult>();
@@ -104,27 +104,31 @@ export class AdminPanelComponent implements OnInit {
     this.practiceHistoryDataSource.data = practiceResults;
   }
 
-  async clearQuizHistory() {
+  async deleteQuizResult(result: QuizResult) {
     try {
-      await this.englishService.clearQuizHistory();
-      this.quizHistory = [];
-      this.quizHistoryDataSource.data = [];
-      this.snackBar.open('Quiz history cleared successfully', 'Close', { duration: 3000 });
+      if (!result.id) {
+        console.error('Quiz result has no ID');
+        return;
+      }
+      await this.englishService.deleteQuizResult(result.id);
+      this.quizHistory = this.quizHistory.filter(item => item.id !== result.id);
+      this.quizHistoryDataSource.data = this.quizHistory;
+      this.snackBar.open('Quiz result deleted successfully', 'Close', { duration: 3000 });
     } catch (error) {
-      console.error('Error clearing quiz history:', error);
-      this.snackBar.open('Error clearing quiz history', 'Close', { duration: 3000 });
+      console.error('Error deleting quiz result:', error);
+      this.snackBar.open('Error deleting quiz result', 'Close', { duration: 3000 });
     }
   }
 
-  async clearPracticeHistory() {
+  async deletePracticeResult(result: PracticeResponse) {
     try {
-      await this.englishService.clearPracticeHistory();
-      this.practiceHistory = [];
-      this.practiceHistoryDataSource.data = [];
-      this.snackBar.open('Practice history cleared successfully', 'Close', { duration: 3000 });
+      await this.englishService.deletePracticeResult(result.practiceId);
+      this.practiceHistory = this.practiceHistory.filter(item => item.practiceId !== result.practiceId);
+      this.practiceHistoryDataSource.data = this.practiceHistory;
+      this.snackBar.open('Practice result deleted successfully', 'Close', { duration: 3000 });
     } catch (error) {
-      console.error('Error clearing practice history:', error);
-      this.snackBar.open('Error clearing practice history', 'Close', { duration: 3000 });
+      console.error('Error deleting practice result:', error);
+      this.snackBar.open('Error deleting practice result', 'Close', { duration: 3000 });
     }
   }
 

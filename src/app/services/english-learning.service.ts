@@ -236,8 +236,12 @@ ${practice.correctAnswer ? `Correct Answer: ${practice.correctAnswer}` : ''}`;
     }
   }
 
-  async clearQuizHistory(): Promise<void> {
-    await this.firebaseService.setData(this.QUIZ_RESULTS_PATH, null);
+  async deleteQuizResult(resultId: string): Promise<void> {
+    await this.firebaseService.deleteData(`${this.QUIZ_RESULTS_PATH}/${resultId}`);
+  }
+
+  async deletePracticeResult(resultId: string): Promise<void> {
+    await this.firebaseService.deleteData(`${this.PRACTICE_HISTORY_PATH}/${resultId}`);
   }
 
   async getQuizResults(quizId?: string, limit: number = 20): Promise<QuizResult[]> {

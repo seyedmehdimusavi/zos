@@ -10,10 +10,6 @@
   <section class="quiz-history-section">
     <div class="section-header">
       <h2>Quiz History</h2>
-      <button mat-button color="warn" (click)="clearQuizHistory()" [disabled]="quizHistory.length === 0">
-        <mat-icon>delete</mat-icon>
-        Clear History
-      </button>
     </div>
     <div *ngIf="quizHistory.length === 0" class="no-data-message">
       No quiz attempts yet.
@@ -54,8 +50,18 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="quizHistoryColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: quizHistoryColumns"></tr>
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let item">
+          <button mat-icon-button color="warn" (click)="deleteQuizResult(item)" matTooltip="Delete this result">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['timestamp', 'quizTitle', 'score', 'questions', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['timestamp', 'quizTitle', 'score', 'questions', 'actions']"></tr>
       </table>
     </div>
   </section>
@@ -65,10 +71,6 @@
   <section class="history-section">
     <div class="section-header">
       <h2>Practice History</h2>
-      <button mat-button color="warn" (click)="clearPracticeHistory()" [disabled]="practiceHistory.length === 0">
-        <mat-icon>delete</mat-icon>
-        Clear History
-      </button>
     </div>
     <div *ngIf="practiceHistory.length === 0" class="no-data-message">
       No practice attempts yet.
@@ -114,8 +116,18 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="historyColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: historyColumns" (click)="showFeedback(row)" class="clickable-row"></tr>
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let item">
+          <button mat-icon-button color="warn" (click)="$event.stopPropagation(); deletePracticeResult(item)" matTooltip="Delete this result">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['timestamp', 'userAnswer', 'score', 'isCorrect', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['timestamp', 'userAnswer', 'score', 'isCorrect', 'actions']" (click)="showFeedback(row)" class="clickable-row"></tr>
       </table>
     </div>
   </section>
