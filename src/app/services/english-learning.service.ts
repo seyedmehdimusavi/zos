@@ -240,8 +240,10 @@ ${practice.correctAnswer ? `Correct Answer: ${practice.correctAnswer}` : ''}`;
     await this.firebaseService.deleteData(`${this.QUIZ_RESULTS_PATH}/${resultId}`);
   }
 
-  async deletePracticeResult(resultId: string): Promise<void> {
-    await this.firebaseService.deleteData(`${this.PRACTICE_HISTORY_PATH}/${resultId}`);
+  async deletePracticeResult(timestamp: string): Promise<void> {
+    // Convert timestamp to valid Firebase key by replacing invalid characters
+    const historyId = timestamp.replace(/[.#$\[\]]/g, '_');
+    await this.firebaseService.deleteData(`${this.PRACTICE_HISTORY_PATH}/${historyId}`);
   }
 
   async getQuizResults(quizId?: string, limit: number = 20): Promise<QuizResult[]> {

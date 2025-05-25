@@ -122,8 +122,12 @@ export class AdminPanelComponent implements OnInit {
 
   async deletePracticeResult(result: PracticeResponse) {
     try {
-      await this.englishService.deletePracticeResult(result.practiceId);
-      this.practiceHistory = this.practiceHistory.filter(item => item.practiceId !== result.practiceId);
+      if (!result.timestamp) {
+        console.error('Practice result has no timestamp');
+        return;
+      }
+      await this.englishService.deletePracticeResult(result.timestamp);
+      this.practiceHistory = this.practiceHistory.filter(item => item.timestamp !== result.timestamp);
       this.practiceHistoryDataSource.data = this.practiceHistory;
       this.snackBar.open('Practice result deleted successfully', 'Close', { duration: 3000 });
     } catch (error) {
