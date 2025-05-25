@@ -219,14 +219,17 @@ ${practice.correctAnswer ? `Correct Answer: ${practice.correctAnswer}` : ''}`;
     });
   }
 
-  async getQuizResults(quizId: string): Promise<QuizResult[]> {
+  async getQuizResults(quizId?: string): Promise<QuizResult[]> {
     const data = await this.firebaseService.getData(this.QUIZ_RESULTS_PATH);
-    return Object.values(data || {})
-      .map(item => item as QuizResult)
-      .filter(result => result.quizId === quizId)
-      .sort((a, b) => 
-        new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
-      );
+    const results = Object.values(data || {}).map(item => item as QuizResult);
+    
+    if (quizId) {
+      return results
+        .filter(result => result.quizId === quizId)
+        .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime());
+    }
+    
+    return results.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime());
   }
 
   private async updateLearningItems(response: PracticeResponse): Promise<void> {

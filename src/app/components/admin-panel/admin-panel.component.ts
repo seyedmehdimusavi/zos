@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PracticeFeedbackDialogComponent } from '../practice-feedback-dialog/practice-feedback-dialog.component';
 import { EnglishLearningService } from '../../services/english-learning.service';
 import { LearningItem, PracticeResponse } from '../../models/english-learning.model';
+import { Quiz, QuizResult } from '../../models/quiz.model';
 
 @Component({
   selector: 'app-admin-panel',
@@ -35,6 +36,9 @@ import { LearningItem, PracticeResponse } from '../../models/english-learning.mo
   ]
 })
 export class AdminPanelComponent implements OnInit {
+  quizHistory: QuizResult[] = [];
+  quizzes: Quiz[] = [];
+  quizHistoryColumns: string[] = ['timestamp', 'quizTitle', 'score', 'questions'];
   learningItems: LearningItem[] = [];
   practiceHistory: PracticeResponse[] = [];
   displayedColumns: string[] = ['name', 'type', 'proficiency', 'lastPracticed', 'actions'];
@@ -59,7 +63,9 @@ export class AdminPanelComponent implements OnInit {
   async ngOnInit() {
     await Promise.all([
       this.loadItems(),
-      this.loadPracticeHistory()
+      this.loadPracticeHistory(),
+      this.loadQuizHistory(),
+      this.loadQuizzes()
     ]);
   }
 
@@ -69,6 +75,30 @@ export class AdminPanelComponent implements OnInit {
 
   async loadPracticeHistory() {
     this.practiceHistory = await this.englishService.getPracticeHistory();
+  }
+
+  async loadQuizHistory() {
+    try {
+      const results = await this.englishService.getQuizResults();
+      this.quizHistory = results.map(result => ({
+        ...result,
+        completedAt: new Date(result.completedAt)
+      }));
+      console.log('Quiz history loaded:', this.quizHistory);
+    } catch (error) {
+      console.error('Error loading quiz history:', error);
+      this.snackBar.open('Error loading quiz history', 'Close', { duration: 3000 });
+    }
+  }
+
+  async loadQuizzes() {
+    this.quizzes = await this.englishService.getQuizzes();
+  }
+
+  getQuizTitle(quizId: string): string {
+    if (!quizId) return 'Unknown Quiz';
+    const quiz = this.quizzes.find(q => q.id === quizId);
+    return quiz?.title || 'Unknown Quiz';
   }
 
   showFeedback(practice: PracticeResponse) {

@@ -3,6 +3,7 @@
   width: 100%;
   box-sizing: border-box;
 
+  .quiz-history-section,
   .history-section {
     margin-top: 24px;
   }
@@ -28,7 +29,41 @@
       }
     }
 
-    .score-circle {
+    .quiz-history-section {
+    .no-data-message {
+      text-align: center;
+      padding: 20px;
+      color: rgba(0, 0, 0, 0.54);
+      font-style: italic;
+    }
+    .history-table {
+      width: 100%;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .mat-column-timestamp {
+      width: 150px;
+    }
+
+    .mat-column-quizTitle {
+      min-width: 200px;
+    }
+
+    .mat-column-score {
+      width: 100px;
+      text-align: center;
+    }
+
+    .mat-column-questions {
+      width: 100px;
+      text-align: center;
+    }
+  }
+
+  .score-circle {
       width: 40px;
       height: 40px;
       border-radius: 50%;

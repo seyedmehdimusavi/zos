@@ -93,6 +93,53 @@
     </table>
   </section>
 
+  <section class="quiz-history-section">
+    <h2>Quiz History</h2>
+    <div *ngIf="quizHistory.length === 0" class="no-data-message">
+      No quiz attempts yet.
+    </div>
+    <table mat-table [dataSource]="quizHistory" class="history-table" *ngIf="quizHistory.length > 0">
+      <!-- Timestamp Column -->
+      <ng-container matColumnDef="timestamp">
+        <th mat-header-cell *matHeaderCellDef>Date & Time</th>
+        <td mat-cell *matCellDef="let item">
+          {{item.completedAt | date:'medium'}}
+        </td>
+      </ng-container>
+
+      <!-- Quiz Title Column -->
+      <ng-container matColumnDef="quizTitle">
+        <th mat-header-cell *matHeaderCellDef>Quiz</th>
+        <td mat-cell *matCellDef="let item">
+          {{getQuizTitle(item.quizId)}}
+        </td>
+      </ng-container>
+
+      <!-- Score Column -->
+      <ng-container matColumnDef="score">
+        <th mat-header-cell *matHeaderCellDef>Score</th>
+        <td mat-cell *matCellDef="let item">
+          <div class="score-circle" [style.background]="getScoreColor(item.score)">
+            {{item.score}}%
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Questions Column -->
+      <ng-container matColumnDef="questions">
+        <th mat-header-cell *matHeaderCellDef>Questions</th>
+        <td mat-cell *matCellDef="let item" class="text-center">
+          {{item.totalQuestions}}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="quizHistoryColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: quizHistoryColumns;"></tr>
+    </table>
+  </section>
+
+  <mat-divider class="section-divider"></mat-divider>
+
   <section class="history-section">
     <h2>Practice History</h2>
     <table mat-table [dataSource]="practiceHistory" class="history-table">
