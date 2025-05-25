@@ -23,6 +23,7 @@ export class NavComponent {
     { path: '/practice', icon: 'school', label: 'Practice' },
     { path: '/word-quiz', icon: 'abc', label: 'Word Quiz' },
     { path: '/quiz', icon: 'quiz', label: 'Quizzes' },
+    { path: '/learning-items', icon: 'list_alt', label: 'Learning Items' },
     { path: '/admin', icon: 'admin_panel_settings', label: 'Admin' }
   ];
 }
