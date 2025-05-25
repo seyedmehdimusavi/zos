@@ -41,6 +41,31 @@ export class QuizManagementComponent {
     this.quizzes = await this.englishService.getQuizzes();
   }
 
+  private readonly QUESTIONS_PER_SECTION = 10;
+
+  private splitQuestionsIntoSections(questions: QuizQuestion[], baseTitle: string): Quiz[] {
+    const totalSections = Math.ceil(questions.length / this.QUESTIONS_PER_SECTION);
+    const quizzes: Quiz[] = [];
+
+    for (let i = 0; i < totalSections; i++) {
+      const startIdx = i * this.QUESTIONS_PER_SECTION;
+      const endIdx = Math.min((i + 1) * this.QUESTIONS_PER_SECTION, questions.length);
+      const sectionQuestions = questions.slice(startIdx, endIdx);
+
+      const sectionTitle = totalSections > 1 
+        ? `${baseTitle} - Part ${i + 1}` 
+        : baseTitle;
+
+      quizzes.push({
+        title: sectionTitle,
+        questions: sectionQuestions,
+        createdAt: new Date()
+      });
+    }
+
+    return quizzes;
+  }
+
   async uploadQuiz() {
     if (!this.quizTitle.trim()) {
       this.snackBar.open('Please enter a quiz title', 'Close', { duration: 3000 });
@@ -62,14 +87,17 @@ export class QuizManagementComponent {
         }
       }
 
-      const quiz: Quiz = {
-        title: this.quizTitle.trim(),
-        questions,
-        createdAt: new Date()
-      };
+      const quizzes = this.splitQuestionsIntoSections(questions, this.quizTitle.trim());
+      
+      for (const quiz of quizzes) {
+        await this.englishService.addQuiz(quiz);
+      }
 
-      await this.englishService.addQuiz(quiz);
-      this.snackBar.open('Quiz uploaded successfully', 'Close', { duration: 3000 });
+      const message = quizzes.length > 1
+        ? `Quiz uploaded successfully and split into ${quizzes.length} parts`
+        : 'Quiz uploaded successfully';
+
+      this.snackBar.open(message, 'Close', { duration: 3000 });
       this.quizTitle = '';
       this.jsonContent = '';
       await this.loadQuizzes();
