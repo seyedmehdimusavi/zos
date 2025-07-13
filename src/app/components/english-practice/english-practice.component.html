@@ -2,7 +2,16 @@
   <h2>English Practice</h2>
   
   <!-- Learning Items Display -->
-  <!-- <section class="learning-section" *ngIf="learningItems.length > 0">
+  <section class="learning-section" *ngIf="learningItems.length > 0">
+    <div class="proficiency-summary">
+      <h4>Proficiency Summary</h4>
+      <div class="summary-list">
+        <div *ngFor="let range of proficiencyRanges" class="summary-item">
+          <span class="range-label">{{range.range}}</span>
+          <span class="range-count">{{range.count}} items</span>
+        </div>
+      </div>
+    </div>
     <div class="section-header">
       <h3>Your Learning Items</h3>
     </div>
@@ -25,7 +34,7 @@
         </div>
       </div>
     </div>
-  </section> -->
+  </section>
 
   <!-- Practice Area -->
   <mat-tab-group class="practice-area">

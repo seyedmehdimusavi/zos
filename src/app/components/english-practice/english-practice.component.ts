@@ -29,6 +29,29 @@ import { LearningItem, Practice, PracticeResponse } from '../../models/english-l
 })
 export class EnglishPracticeComponent implements OnInit {
   learningItems: LearningItem[] = [];
+  proficiencyRanges: { range: string; count: number }[] = [];
+
+  calculateProficiencyRanges(): void {
+    const ranges = [
+      { min: 0, max: 10, label: '0-10%' },
+      { min: 11, max: 20, label: '11-20%' },
+      { min: 21, max: 30, label: '21-30%' },
+      { min: 31, max: 40, label: '31-40%' },
+      { min: 41, max: 50, label: '41-50%' },
+      { min: 51, max: 60, label: '51-60%' },
+      { min: 61, max: 70, label: '61-70%' },
+      { min: 71, max: 80, label: '71-80%' },
+      { min: 81, max: 90, label: '81-90%' },
+      { min: 91, max: 100, label: '91-100%' }
+    ];
+
+    this.proficiencyRanges = ranges.map(range => ({
+      range: range.label,
+      count: this.learningItems.filter(item => 
+        item.proficiency >= range.min && item.proficiency <= range.max
+      ).length
+    }));
+  }
   currentPractice: Practice | null = null;
   userAnswer: string = '';
   lastResponse: PracticeResponse | null = null;
@@ -49,8 +72,16 @@ export class EnglishPracticeComponent implements OnInit {
     await this.loadLearningItems();
   }
 
-  private async loadLearningItems() {
-    this.learningItems = await this.englishService.getLearningItems();
+  private async loadLearningItems(): Promise<void> {
+    try {
+      const items = await this.englishService.getLearningItems();
+      if (items) {
+        this.learningItems = items;
+        this.calculateProficiencyRanges();
+      }
+    } catch (error) {
+      console.error('Error loading learning items:', error);
+    }
   }
 
   async generateNewPractice() {
