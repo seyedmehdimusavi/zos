@@ -8,28 +8,32 @@
       <div class="summary-list">
         <div *ngFor="let range of proficiencyRanges" class="summary-item">
           <span class="range-label">{{range.range}}</span>
-          <span class="range-count">{{range.count}} items</span>
+          <span class="range-count">.....{{range.count}} items</span>
         </div>
       </div>
     </div>
-    <div class="section-header">
-      <h3>Your Learning Items</h3>
-    </div>
-    <div class="learning-items">
+    <button class="toggle-button" (click)="showLearningItems = !showLearningItems">
+      <span *ngIf="!showLearningItems">Show Items List</span>
+      <span *ngIf="showLearningItems">Hide Items List</span>
+    </button>
+    <div class="learning-items" *ngIf="showLearningItems">
+      <div class="section-header">
+        <h3>Your Learning Items (Sorted by Proficiency)</h3>
+      </div>
       <div class="items-grid">
-        <div *ngFor="let item of learningItems" class="item-card">
+        <div *ngFor="let item of sortLearningItems()" class="item-card">
           <div class="card-content">
             <h4>{{ item.name }}</h4>
-            <p class="item-type">Type: {{ item.type }}</p>
+            <!-- <p class="item-type">Type: {{ item.type }}</p> -->
             <div class="proficiency-info">
               <p>Proficiency: {{ item.proficiency }}%</p>
               <div class="progress-bar">
                 <div class="progress" [style.width.%]="item.proficiency"></div>
               </div>
             </div>
-            <p class="status" [class.needs-work]="item.needsImprovement">
+            <!-- <p class="status" [class.needs-work]="item.needsImprovement">
               {{ item.needsImprovement ? 'Needs Improvement' : 'Good Progress' }}
-            </p>
+            </p> -->
           </div>
         </div>
       </div>

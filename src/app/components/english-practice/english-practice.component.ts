@@ -30,6 +30,11 @@ import { LearningItem, Practice, PracticeResponse } from '../../models/english-l
 export class EnglishPracticeComponent implements OnInit {
   learningItems: LearningItem[] = [];
   proficiencyRanges: { range: string; count: number }[] = [];
+  showLearningItems = false;
+
+  sortLearningItems(): LearningItem[] {
+    return [...this.learningItems].sort((a, b) => a.proficiency - b.proficiency);
+  }
 
   calculateProficiencyRanges(): void {
     const ranges = [
