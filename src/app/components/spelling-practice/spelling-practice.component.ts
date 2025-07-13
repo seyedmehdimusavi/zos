@@ -32,6 +32,7 @@ export class SpellingPracticeComponent {
   isCorrect = false;
   showResult = false;
   speech: SpeechSynthesisUtterance;
+  currentWord: string = '';
 
   canAttemptPractice = true;
   averageScore = 0;
@@ -45,15 +46,12 @@ export class SpellingPracticeComponent {
     this.speech.rate = 0.8; // Slightly slower for better clarity
   }
 
-  get currentWord(): string {
-    return this.words[this.currentWordIndex];
-  }
-
   get isLastWord(): boolean {
     return this.currentWordIndex === this.words.length - 1;
   }
 
   playWord() {
+    console.log(this.currentWord);
     this.speech.text = this.currentWord;
     window.speechSynthesis.speak(this.speech);
   }
@@ -70,6 +68,11 @@ export class SpellingPracticeComponent {
         duration: 5000
       });
     }
+  }
+
+  
+  get currentWordForPractice(): string {
+    return this.words[this.currentWordIndex];
   }
 
   private async loadAverageScore() {
@@ -89,11 +92,24 @@ export class SpellingPracticeComponent {
     this.practiceComplete.emit({ word: this.currentWord, correct: this.isCorrect });
   }
 
-  nextWord() {
-    if (this.currentWordIndex < this.words.length - 1) {
-      this.currentWordIndex++;
-      this.resetState();
-      this.playWord(); // Automatically play the next word
+  async nextWord() {
+    try {
+      const lowestProficiencyWord = await this.englishService.getWordWithLowestProficiency();
+      if (lowestProficiencyWord) {
+        this.currentWord = lowestProficiencyWord.name;
+        this.currentWordIndex++;
+        this.resetState();
+        this.playWord();
+      } else {
+        this.snackBar.open('No words available for practice!', 'OK', {
+          duration: 3000
+        });
+      }
+    } catch (error) {
+      console.error('Error getting word with lowest proficiency:', error);
+      this.snackBar.open('Error loading practice word. Please try again.', 'OK', {
+        duration: 3000
+      });
     }
   }
 

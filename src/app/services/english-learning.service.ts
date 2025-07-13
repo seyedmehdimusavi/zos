@@ -61,6 +61,19 @@ export class EnglishLearningService {
     return Object.values(data || {});
   }
 
+  async getWordWithLowestProficiency(): Promise<LearningItem | null> {
+    const items = await this.getLearningItems();
+    if (!items || items.length === 0) return null;
+
+    // Filter for words only and find the one with lowest proficiency
+    const words = items.filter(item => item.type === 'word');
+    if (words.length === 0) return null;
+
+    return words.reduce((lowest, current) => 
+      current.proficiency < lowest.proficiency ? current : lowest
+    );
+  }
+
   async getPracticeHistory(): Promise<PracticeResponse[]> {
     const data = await this.firebaseService.getData(this.PRACTICE_HISTORY_PATH);
     return data ? Object.values(data) : [];
