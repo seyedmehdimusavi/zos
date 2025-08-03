@@ -3,6 +3,7 @@ import { FirebaseService } from './firebase.service';
 import { GeminiService } from './gemini.service';
 import { LearningItem, Practice, PracticeResponse } from '../models/english-learning.model';
 import { Quiz, QuizResult } from '../models/quiz.model';
+import { WordQuiz, WordQuizResult } from '../models/word-quiz.model';
 import { Observable, from, map, switchMap } from 'rxjs';
 
 @Injectable({
@@ -13,6 +14,8 @@ export class EnglishLearningService {
   private readonly PRACTICE_HISTORY_PATH = 'practiceHistory';
   private readonly QUIZZES_PATH = 'quizzes';
   private readonly QUIZ_RESULTS_PATH = 'quizResults';
+  private readonly WORD_QUIZZES_PATH = 'wordQuizzes';
+  private readonly WORD_QUIZ_RESULTS_PATH = 'wordQuizResults';
 
   constructor(
     private firebaseService: FirebaseService,
@@ -317,6 +320,106 @@ ${practice.correctAnswer ? `Correct Answer: ${practice.correctAnswer}` : ''}`;
       
       item.lastPracticed = new Date().toISOString();
       await this.addLearningItem(item);
+    }
+  }
+
+  // Word Quiz Methods
+  async getWordQuizzes(): Promise<WordQuiz[]> {
+    try {
+      const quizzes = await this.firebaseService.getCollection(this.WORD_QUIZZES_PATH);
+      return quizzes.map(quiz => ({
+        ...quiz,
+        id: quiz.id,
+        createdAt: new Date(quiz['createdAt']?.seconds * 1000 || Date.now())
+      } as WordQuiz));
+    } catch (error) {
+      console.error('Error getting word quizzes:', error);
+      return [];
+    }
+  }
+
+  async getWordQuizById(id: string): Promise<WordQuiz | null> {
+    try {
+      const quiz = await this.firebaseService.getDocument(this.WORD_QUIZZES_PATH, id);
+      if (!quiz) return null;
+      
+      return {
+        ...quiz as WordQuiz,
+        id,
+        createdAt: new Date(quiz['createdAt']?.seconds * 1000 || Date.now())
+      };
+    } catch (error) {
+      console.error(`Error getting word quiz ${id}:`, error);
+      return null;
+    }
+  }
+
+  async saveWordQuiz(quiz: Omit<WordQuiz, 'id' | 'createdAt'>): Promise<string> {
+    try {
+      const newQuiz = {
+        ...quiz,
+        createdAt: new Date()
+      };
+      return await this.firebaseService.addDocument(this.WORD_QUIZZES_PATH, newQuiz);
+    } catch (error) {
+      console.error('Error saving word quiz:', error);
+      throw error;
+    }
+  }
+
+  async updateWordQuiz(id: string, quiz: Partial<WordQuiz>): Promise<void> {
+    try {
+      await this.firebaseService.updateDocument(this.WORD_QUIZZES_PATH, id, quiz);
+    } catch (error) {
+      console.error(`Error updating word quiz ${id}:`, error);
+      throw error;
+    }
+  }
+
+  async deleteWordQuiz(id: string): Promise<void> {
+    try {
+      await this.firebaseService.deleteDocument(this.WORD_QUIZZES_PATH, id);
+    } catch (error) {
+      console.error(`Error deleting word quiz ${id}:`, error);
+      throw error;
+    }
+  }
+
+  async saveWordQuizResult(result: Omit<WordQuizResult, 'id' | 'formattedDate' | 'completedAt'>): Promise<string> {
+    try {
+      const completedAt = new Date();
+      const newResult = {
+        ...result,
+        completedAt: completedAt.toISOString(),
+        formattedDate: completedAt.toLocaleDateString()
+      };
+      return await this.firebaseService.addDocument(this.WORD_QUIZ_RESULTS_PATH, newResult);
+    } catch (error) {
+      console.error('Error saving word quiz result:', error);
+      throw error;
+    }
+  }
+
+  async getWordQuizResults(quizId?: string): Promise<WordQuizResult[]> {
+    try {
+      const query: [string, string, any][] = [];
+      if (quizId) {
+        query.push(['quizId', '==', quizId]);
+      }
+      const results = await this.firebaseService.getCollectionWithQuery(
+        this.WORD_QUIZ_RESULTS_PATH,
+        query
+      );
+      
+      return results.map(result => ({
+        ...result as WordQuizResult,
+        id: result.id,
+        completedAt: result['completedAt'],
+        formattedDate: new Date(result['completedAt']).toLocaleDateString()
+      }));
+    } catch (error) {
+      console.error('Error getting word quiz results:', error);
+      return [];
     }
   }
 }

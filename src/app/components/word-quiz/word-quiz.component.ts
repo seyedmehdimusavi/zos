@@ -1,22 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatRadioModule } from '@angular/material/radio';
 import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { EnglishLearningService } from '../../services/english-learning.service';
-import { LearningItem } from '../../models/english-learning.model';
-
-interface QuizQuestion {
-  id: number;
-  word: string;
-  question: string;
-  options: string[];
-  correctAnswer: string;
-  selectedAnswer?: string;
-}
+import { WordQuiz, WordQuizQuestion, WordQuizResult } from '../../models/word-quiz.model';
 
 @Component({
   selector: 'app-word-quiz',
@@ -25,122 +20,163 @@ interface QuizQuestion {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatButtonModule,
-    MatRadioModule,
     MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
     MatProgressBarModule,
-    MatSnackBarModule
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatTooltipModule
   ]
 })
 export class WordQuizComponent implements OnInit {
-  questions: QuizQuestion[] = [];
+  quizForm: FormGroup;
+  currentQuestionIndex = 0;
+  quiz: WordQuiz | null = null;
   loading = false;
   quizSubmitted = false;
   score = 0;
+  userAnswers: string[] = [];
+  showHint = false;
+
+  // Get current question from the quiz
+  get currentQuestion(): WordQuizQuestion | null {
+    if (!this.quiz || this.quiz.questions.length === 0) {
+      return null;
+    }
+    return this.quiz.questions[this.currentQuestionIndex];
+  }
 
   constructor(
     private englishService: EnglishLearningService,
-    private snackBar: MatSnackBar
-  ) {}
-
-  async ngOnInit() {
-    await this.generateQuiz();
+    private snackBar: MatSnackBar,
+    private fb: FormBuilder
+  ) {
+    this.quizForm = this.fb.group({
+      answer: ['', [Validators.required, Validators.minLength(1)]]
+    });
   }
 
-  async generateQuiz() {
+  async ngOnInit() {
+    await this.loadQuiz();
+  }
+
+  async loadQuiz() {
     this.loading = true;
-    this.quizSubmitted = false;
-    this.score = 0;
-    
     try {
-      // Get all learning items
-      const items = await this.englishService.getLearningItems();
-      const words = items.filter(item => item.type === 'word');
-
-      if (words.length < 10) {
-        this.snackBar.open('Not enough words available. Please add at least 10 words.', 'Close', { duration: 5000 });
-        this.loading = false;
-        return;
+      // Using getQuizzes temporarily - we'll need to implement getWordQuizzes in the service
+      const quizzes = await this.englishService.getQuizzes() as unknown as WordQuiz[];
+      if (quizzes.length > 0) {
+        // For now, just take the first quiz. You might want to add quiz selection logic
+        this.quiz = quizzes[0];
+        this.userAnswers = new Array(this.quiz.questions.length).fill('');
+        this.loadQuestion(0);
+      } else {
+        this.snackBar.open('No word quizzes available', 'Close', { duration: 3000 });
       }
-
-      // Randomly select 10 words
-      const selectedWords = this.shuffleArray(words).slice(0, 10);
-      
-      // Generate questions
-      this.questions = await Promise.all(selectedWords.map(async (word, index) => {
-        const otherWords = words.filter(w => w.name !== word.name);
-        const distractors = this.shuffleArray(otherWords)
-          .slice(0, 3)
-          .map(w => w.name);
-
-        const options = this.shuffleArray([word.name, ...distractors]);
-
-        return {
-          id: index + 1,
-          word: word.name,
-          question: `What is the correct meaning or usage of the word "${word.name}"?`,
-          options,
-          correctAnswer: word.name,
-          selectedAnswer: undefined
-        };
-      }));
     } catch (error) {
-      this.snackBar.open('Error generating quiz', 'Close', { duration: 3000 });
+      this.snackBar.open('Error loading quiz', 'Close', { duration: 3000 });
+      console.error('Error loading quiz:', error);
     } finally {
       this.loading = false;
+    }
+  }
+
+  loadQuestion(index: number) {
+    if (!this.quiz || index < 0 || index >= this.quiz.questions.length) return;
+    
+    this.currentQuestionIndex = index;
+    const currentAnswer = this.userAnswers[index] || '';
+    this.quizForm.setValue({ answer: currentAnswer });
+    this.showHint = false;
+  }
+
+  async submitAnswer() {
+    if (this.quizForm.invalid || !this.quiz) return;
+
+    const answer = this.quizForm.value.answer.trim();
+    this.userAnswers[this.currentQuestionIndex] = answer;
+    
+    // Move to next question or submit if last question
+    if (this.currentQuestionIndex < this.quiz.questions.length - 1) {
+      this.loadQuestion(this.currentQuestionIndex + 1);
+    } else {
+      await this.submitQuiz();
     }
   }
 
   async submitQuiz() {
-    if (!this.allQuestionsAnswered()) {
-      this.snackBar.open('Please answer all questions before submitting', 'Close', { duration: 3000 });
-      return;
-    }
-
+    if (!this.quiz) return;
+    
     this.loading = true;
+    this.quizSubmitted = true;
+    
     try {
-      const correctAnswers = this.questions.filter(q => q.selectedAnswer === q.correctAnswer).length;
-      this.score = (correctAnswers / this.questions.length) * 100;
-      this.quizSubmitted = true;
-
-      // Update word proficiencies
-      for (const question of this.questions) {
-        const isCorrect = question.selectedAnswer === question.correctAnswer;
-        const word = await this.englishService.getLearningItems()
-          .then(items => items.find(item => item.name === question.word));
-
-        if (word) {
-          word.proficiency = Math.min(100, Math.max(0, word.proficiency + (isCorrect ? 10 : -5)));
-          word.needsImprovement = !isCorrect;
-          word.lastPracticed = new Date().toISOString();
-          await this.englishService.addLearningItem(word);
+      // Calculate score
+      let correctAnswers = 0;
+      this.quiz.questions.forEach((question, index) => {
+        if (this.isAnswerCorrect(question.answer, this.userAnswers[index])) {
+          correctAnswers++;
         }
-      }
-
-      this.snackBar.open(`Quiz completed! Score: ${this.score}%`, 'Close', { duration: 5000 });
+      });
+      
+      this.score = Math.round((correctAnswers / this.quiz.questions.length) * 100);
+      
+      // Create quiz result
+      const quizResult: WordQuizResult = {
+        quizId: this.quiz.id || '',
+        score: this.score,
+        totalQuestions: this.quiz.questions.length,
+        completedAt: new Date().toISOString(),
+        quizTitle: this.quiz.title
+      };
+      
+      // Save result - we'll need to implement saveWordQuizResult in the service
+      console.log('Quiz result:', quizResult);
+      // await this.englishService.saveWordQuizResult(quizResult);
+      
+      this.snackBar.open(`Quiz completed! Your score: ${this.score}%`, 'Close', { duration: 5000 });
     } catch (error) {
       this.snackBar.open('Error submitting quiz', 'Close', { duration: 3000 });
+      console.error('Error submitting quiz:', error);
     } finally {
       this.loading = false;
     }
   }
+  
+  isAnswerCorrect(correctAnswer: string, userAnswer: string): boolean {
+    // Case-insensitive comparison
+    return correctAnswer.toLowerCase() === userAnswer.toLowerCase().trim();
+  }
+  
+  getQuestionStatus(index: number): string {
+    if (!this.quiz || !this.quizSubmitted) return '';
+    
+    const userAnswer = this.userAnswers[index];
+    const correctAnswer = this.quiz.questions[index].answer;
+    
+    if (this.isAnswerCorrect(correctAnswer, userAnswer)) {
+      return 'correct';
+    } else if (userAnswer) {
+      return 'incorrect';
+    }
+    return '';
+  }
 
   allQuestionsAnswered(): boolean {
-    return this.questions.every(q => q.selectedAnswer !== undefined);
+    return this.userAnswers.every(answer => answer.trim() !== '');
   }
 
-  getQuestionStatus(question: QuizQuestion): 'correct' | 'incorrect' | 'unanswered' {
-    if (!this.quizSubmitted) return 'unanswered';
-    return question.selectedAnswer === question.correctAnswer ? 'correct' : 'incorrect';
+  toggleHint(): void {
+    this.showHint = !this.showHint;
   }
 
-  private shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
+  getProgress(): number {
+    if (!this.quiz) return 0;
+    const answered = this.userAnswers.filter((a: string) => a.trim() !== '').length;
+    return (answered / this.quiz.questions.length) * 100;
   }
 }

@@ -1,50 +1,80 @@
-<div class="quiz-container">
+<div class="quiz-container" *ngIf="!loading && quiz">
   <mat-card class="quiz-header">
     <mat-card-header>
-      <mat-card-title>Word Quiz</mat-card-title>
-      <mat-card-subtitle>Test your knowledge with 10 questions</mat-card-subtitle>
+      <mat-card-title>{{ quiz?.title }}</mat-card-title>
+      <mat-card-subtitle>Type your answers below</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+      <mat-progress-bar mode="determinate" [value]="getProgress()"></mat-progress-bar>
       
       <div *ngIf="quizSubmitted" class="score-display">
-        <h2>Your Score: {{score}}%</h2>
-        <button mat-raised-button color="primary" (click)="generateQuiz()">
+        <h2>Your Score: {{ score }}%</h2>
+        <button mat-raised-button color="primary" (click)="loadQuiz()">
           Try Another Quiz
         </button>
       </div>
     </mat-card-content>
   </mat-card>
 
-  <div class="questions-list">
-    <mat-card *ngFor="let question of questions" class="question-card" [ngClass]="getQuestionStatus(question)">
+  <div *ngIf="!quizSubmitted && currentQuestion" class="question-container">
+    <mat-card class="question-card">
       <mat-card-header>
-        <mat-card-title>Question {{question.id}}</mat-card-title>
+        <mat-card-title>Question {{ currentQuestionIndex + 1 }} of {{ quiz?.questions?.length || 0 }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p class="question-text">{{question.question}}</p>
+        <p class="question-text">{{ currentQuestion?.question }}</p>
         
-        <mat-radio-group [(ngModel)]="question.selectedAnswer" [disabled]="quizSubmitted" class="options-group">
-          <mat-radio-button *ngFor="let option of question.options" [value]="option" class="option-button">
-            {{option}}
-          </mat-radio-button>
-        </mat-radio-group>
+        <form [formGroup]="quizForm" (ngSubmit)="submitAnswer()">
+          <mat-form-field appearance="outline" class="answer-input">
+            <mat-label>Your answer</mat-label>
+            <input matInput formControlName="answer" placeholder="Type your answer here">
+            <button 
+              *ngIf="currentQuestion?.hint"
+              matSuffix 
+              mat-icon-button 
+              type="button"
+              (click)="toggleHint()"
+              matTooltip="Show hint"
+              aria-label="Show hint">
+              <mat-icon>help_outline</mat-icon>
+            </button>
+          </mat-form-field>
 
-        <div *ngIf="quizSubmitted" class="feedback">
-          <p *ngIf="question.selectedAnswer === question.correctAnswer" class="correct-answer">
-            Correct! ✓
-          </p>
-          <p *ngIf="question.selectedAnswer !== question.correctAnswer" class="wrong-answer">
-            Incorrect. The correct answer is: {{question.correctAnswer}}
-          </p>
-        </div>
+          <div *ngIf="showHint && currentQuestion?.hint" class="hint">
+            <p><strong>Hint:</strong> {{ currentQuestion.hint }}</p>
+          </div>
+
+          <div class="quiz-actions">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              type="submit"
+              [disabled]="quizForm.invalid || !quiz?.questions?.length">
+              {{ (quiz?.questions && currentQuestionIndex < quiz.questions.length - 1) ? 'Next' : 'Submit Quiz' }}
+            </button>
+          </div>
+        </form>
       </mat-card-content>
     </mat-card>
   </div>
 
-  <div class="quiz-actions" *ngIf="!quizSubmitted && questions.length > 0">
-    <button mat-raised-button color="primary" (click)="submitQuiz()" [disabled]="!allQuestionsAnswered()">
-      Submit Quiz
-    </button>
+  <div *ngIf="quizSubmitted && quiz?.questions?.length" class="results-container">
+    <mat-card *ngFor="let question of quiz.questions; let i = index" 
+              class="result-card" 
+              [ngClass]="getQuestionStatus(i)">
+      <mat-card-header>
+        <mat-card-title>Question {{ i + 1 }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="question-text">{{ question.question }}</p>
+        <p><strong>Your answer:</strong> {{ userAnswers[i] || 'No answer provided' }}</p>
+        <p><strong>Correct answer:</strong> {{ question.answer }}</p>
+      </mat-card-content>
+    </mat-card>
   </div>
+</div>
+
+<div *ngIf="loading" class="loading-container">
+  <mat-spinner></mat-spinner>
+  <p>Loading quiz...</p>
 </div>

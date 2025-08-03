@@ -1,4 +1,15 @@
+
 # OscarEnglish
+
+
+# upload to github
+
+
+ ng build --configuration production --base-href=/zos/
+ npx angular-cli-ghpages --dir=dist/oscar-english
+
+
+
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.12.
 

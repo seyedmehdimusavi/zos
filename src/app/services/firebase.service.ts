@@ -1,6 +1,37 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { Database, getDatabase, ref, set, get, push, remove, update, query, orderByChild, limitToLast, onValue, DataSnapshot } from 'firebase/database';
+import { 
+  Database, 
+  getDatabase, 
+  ref, 
+  set, 
+  push, 
+  remove, 
+  update, 
+  query, 
+  orderByChild, 
+  limitToLast, 
+  onValue, 
+  DataSnapshot, 
+  get as getRTDB,
+  child,
+  equalTo
+} from 'firebase/database';
+import { 
+  getFirestore, 
+  collection, 
+  doc, 
+  getDoc, 
+  getDocs, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  where, 
+  query as firestoreQuery,
+  Query,
+  CollectionReference,
+  DocumentData
+} from 'firebase/firestore';
 import { Observable } from 'rxjs';
 
 interface OrderedQueryOptions {
@@ -13,7 +44,8 @@ interface OrderedQueryOptions {
   providedIn: 'root'
 })
 export class FirebaseService {
-  private db: any;
+  private db: Database;
+  private firestore: any; // Firestore instance
 
   constructor() {
     // Initialize Firebase
@@ -28,14 +60,15 @@ export class FirebaseService {
       measurementId: "G-QGVBQV0BK3"
     });
 
-    // Get a reference to the database service
+    // Get references to the database services
     this.db = getDatabase(app);
+    this.firestore = getFirestore(app);
   }
 
-  // Get data
+  // Get data from Realtime Database
   async getData(path: string): Promise<any> {
     const reference = ref(this.db, path);
-    const snapshot = await get(reference);
+    const snapshot = await getRTDB(reference);
     return snapshot.val();
   }
 
@@ -74,6 +107,88 @@ export class FirebaseService {
     return newRef.key!;
   }
 
+  // Collection and Document Methods
+  async getCollection(collectionPath: string): Promise<any[]> {
+    try {
+      const colRef = collection(this.firestore, collectionPath);
+      const querySnapshot = await getDocs(colRef);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    } catch (error) {
+      console.error('Error getting collection:', error);
+      throw error;
+    }
+  }
+
+  async getDocument(collectionPath: string, docId: string): Promise<any> {
+    try {
+      const docRef = doc(this.firestore, collectionPath, docId);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Error getting document:', error);
+      throw error;
+    }
+  }
+
+  async addDocument(collectionPath: string, data: any): Promise<string> {
+    try {
+      const docRef = await addDoc(collection(this.firestore, collectionPath), data);
+      return docRef.id;
+    } catch (error) {
+      console.error('Error adding document:', error);
+      throw error;
+    }
+  }
+
+  async updateDocument(collectionPath: string, docId: string, data: any): Promise<void> {
+    try {
+      const docRef = doc(this.firestore, collectionPath, docId);
+      await updateDoc(docRef, data);
+    } catch (error) {
+      console.error('Error updating document:', error);
+      throw error;
+    }
+  }
+
+  async deleteDocument(collectionPath: string, docId: string): Promise<void> {
+    try {
+      const docRef = doc(this.firestore, collectionPath, docId);
+      await deleteDoc(docRef);
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      throw error;
+    }
+  }
+
+  async getCollectionWithQuery(collectionPath: string, conditions: [string, string, any][] = []): Promise<any[]> {
+    try {
+      const colRef = collection(this.firestore, collectionPath);
+      let q: Query<DocumentData> = colRef;
+      
+      // Apply conditions if any
+      conditions.forEach(([field, operator, value]) => {
+        q = firestoreQuery(q, where(field, operator as any, value));
+      });
+      
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    } catch (error) {
+      console.error('Error getting collection with query:', error);
+      throw error;
+    }
+  }
+
   // Get data as observable
   getDataAsObservable(path: string): Observable<any> {
     const reference = ref(this.db, path);
@@ -96,7 +211,7 @@ export class FirebaseService {
     console.log('Created query with orderByChild and limitToLast');
     
     try {
-      const snapshot = await get(queryRef);
+      const snapshot = await getRTDB(queryRef);
       console.log('Got snapshot from Firebase');
       console.log('Snapshot exists:', snapshot.exists());
       if (snapshot.exists()) {
