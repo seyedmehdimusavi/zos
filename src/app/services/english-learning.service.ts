@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FirebaseService } from './firebase.service';
 import { GeminiService } from './gemini.service';
 import { LearningItem, Practice, PracticeResponse } from '../models/english-learning.model';
-import { Quiz, QuizResult } from '../models/quiz.model';
+import { Quiz, QuizOneAnswer, QuizResult } from '../models/quiz.model';
 import { WordQuiz, WordQuizResult } from '../models/word-quiz.model';
 import { Observable, from, map, switchMap } from 'rxjs';
 
@@ -13,6 +13,7 @@ export class EnglishLearningService {
   private readonly LEARNING_ITEMS_PATH = 'learningItems';
   private readonly PRACTICE_HISTORY_PATH = 'practiceHistory';
   private readonly QUIZZES_PATH = 'quizzes';
+  private readonly QUIZZES_ONE_ANSWER_PATH = 'quizzesOneAnswer';
   private readonly QUIZ_RESULTS_PATH = 'quizResults';
   private readonly WORD_QUIZZES_PATH = 'wordQuizzes';
   private readonly WORD_QUIZ_RESULTS_PATH = 'wordQuizResults';
@@ -218,9 +219,27 @@ ${practice.correctAnswer ? `Correct Answer: ${practice.correctAnswer}` : ''}`;
     });
   }
 
+  async addQuizOneAnswer(quiz: QuizOneAnswer): Promise<void> {
+    const quizId = new Date().getTime().toString();
+    await this.firebaseService.setData(`${this.QUIZZES_ONE_ANSWER_PATH}/${quizId}`, {
+      ...quiz,
+      id: quizId
+    });
+  }
+
+
   async deleteQuiz(quizId: string): Promise<void> {
     await this.firebaseService.deleteData(`${this.QUIZZES_PATH}/${quizId}`);
   }
+
+
+  async getOneAnswerQuizzes(): Promise<QuizOneAnswer[]> {
+    const data = await this.firebaseService.getData(this.QUIZZES_ONE_ANSWER_PATH);
+    return Object.values(data || {}).map(item => item as QuizOneAnswer).sort((a: QuizOneAnswer, b: QuizOneAnswer) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
 
   async getQuizzes(): Promise<Quiz[]> {
     const data = await this.firebaseService.getData(this.QUIZZES_PATH);

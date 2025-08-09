@@ -4,6 +4,7 @@ import { AdminPanelComponent } from './components/admin-panel/admin-panel.compon
 import { WordQuizComponent } from './components/word-quiz/word-quiz.component';
 import { QuizComponent } from './components/quiz/quiz.component';
 import { LearningItemsComponent } from './components/learning-items/learning-items.component';
+import { QuizManagementOneAnswerComponent } from './components/quiz-management-one-answer/quiz-management-one-answer.component';
 
 export const routes: Routes = [
   { path: 'practice', component: EnglishPracticeComponent },

@@ -12,6 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EnglishLearningService } from '../../services/english-learning.service';
 import { WordQuiz, WordQuizQuestion, WordQuizResult } from '../../models/word-quiz.model';
+import { QuizOneAnswer } from '../../models/quiz.model';
 
 @Component({
   selector: 'app-word-quiz',
@@ -68,7 +69,7 @@ export class WordQuizComponent implements OnInit {
     this.loading = true;
     try {
       // Using getQuizzes temporarily - we'll need to implement getWordQuizzes in the service
-      const quizzes = await this.englishService.getQuizzes() as unknown as WordQuiz[];
+      const quizzes = await this.englishService.getOneAnswerQuizzes() as QuizOneAnswer[];
       if (quizzes.length > 0) {
         // For now, just take the first quiz. You might want to add quiz selection logic
         this.quiz = quizzes[0];

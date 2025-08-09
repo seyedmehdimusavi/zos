@@ -1,0 +1,76 @@
+<div class="quiz-management">
+  <h2>One Answer Quiz Management</h2>
+
+  <div class="upload-section">
+    <mat-form-field appearance="outline" class="title-input">
+      <mat-label>Quiz Title</mat-label>
+      <input matInput [(ngModel)]="quizTitle" placeholder="Enter quiz title">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="json-input">
+      <mat-label>Quiz Questions (JSON)</mat-label>
+      <textarea matInput [(ngModel)]="jsonContent" placeholder="Paste your JSON questions here" rows="10"></textarea>
+      <mat-hint>Format: Array of objects with 'question' and 'answer' fields</mat-hint>
+      <mat-hint align="end">Example: [&#123;"question": "What is the capital of France?", "answer": "Paris"&#125;, ...]</mat-hint>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="uploadQuiz()">
+      <mat-icon>upload</mat-icon>
+      Upload Quiz
+    </button>
+  </div>
+
+  <div class="quizzes-list" *ngIf="quizzes.length > 0">
+    <h3>Uploaded Quizzes</h3>
+    <div *ngIf="quizzes.length === 0" class="no-quizzes-message">
+      No quizzes uploaded yet.
+    </div>
+
+    <table mat-table [dataSource]="quizzes" class="quiz-table" *ngIf="quizzes.length > 0">
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Title</th>
+        <td mat-cell *matCellDef="let quiz">
+          <div class="quiz-title">
+            {{quiz.title}}
+            <span class="quiz-part" *ngIf="quiz.title.includes('Part')">
+              ({{quiz.questions.length}} questions)
+            </span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Questions Column -->
+      <ng-container matColumnDef="questions">
+        <th mat-header-cell *matHeaderCellDef>Questions</th>
+        <td mat-cell *matCellDef="let quiz" class="text-center">
+          {{quiz.questions.length}}
+        </td>
+      </ng-container>
+
+      <!-- Created At Column -->
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef>Created</th>
+        <td mat-cell *matCellDef="let quiz">{{quiz.createdAt | date:'medium'}}</td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let quiz">
+          <button mat-icon-button color="warn" (click)="deleteQuiz(quiz.id!)" 
+                  matTooltip="Delete quiz">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+
+  <div class="no-quizzes" *ngIf="quizzes.length === 0">
+    <p>No quizzes uploaded yet.</p>
+  </div>
+</div>

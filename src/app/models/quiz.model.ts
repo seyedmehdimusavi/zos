@@ -7,6 +7,19 @@ export interface QuizQuestion {
   correctOptionNumber: number;
 }
 
+
+export interface QuizQuestionOneAnswer {
+  question: string;
+  answer: string;
+}
+
+export interface QuizOneAnswer {
+  id?: string;
+  title: string;
+  questions: QuizQuestionOneAnswer[];
+  createdAt: Date;
+}
+
 export interface Quiz {
   id?: string;
   title: string;

@@ -15,6 +15,7 @@ import { PracticeFeedbackDialogComponent } from '../practice-feedback-dialog/pra
 import { EnglishLearningService } from '../../services/english-learning.service';
 import { LearningItem, PracticeResponse } from '../../models/english-learning.model';
 import { Quiz, QuizResult } from '../../models/quiz.model';
+import { QuizManagementOneAnswerComponent } from '../quiz-management-one-answer/quiz-management-one-answer.component';
 
 @Component({
   selector: 'app-admin-panel',
@@ -32,7 +33,8 @@ import { Quiz, QuizResult } from '../../models/quiz.model';
     MatIconModule,
     MatDialogModule,
     MatDividerModule,
-    QuizManagementComponent
+    QuizManagementComponent,
+    QuizManagementOneAnswerComponent
   ]
 })
 export class AdminPanelComponent implements OnInit {
